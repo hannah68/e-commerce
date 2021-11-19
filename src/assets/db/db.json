@@ -1,0 +1,429 @@
+{
+    "products":[
+        {
+            "id": 1,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand Fabric ArmChair",
+            "color": "pink",
+            "category": "chair",
+            "img":"../images/chair6.jpg",
+            "price": 79,
+            "quantity": 1,
+            "feature": true
+        },
+        {
+            "id": 2,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand 2 Seater Fabric Sofa",
+            "color": "blue",
+            "category": "sofa",
+            "img":"../images/sofa1.jpg",
+            "price": 399,
+            "quantity":1 ,
+            "feature": true
+        },
+        {
+            "id": 3,
+            "collection": "Autumn/ Winter",
+            "title": "WoodLand Velvet Armchair-White",
+            "color": "white",
+            "category": "chair",
+            "img":"../images/chair.jpg",
+            "price": 169,
+            "quantity": 1,
+            "feature": true
+        },
+        {
+            "id": 4,
+            "collection": "Autumn/ Winter",
+            "title": "WoodLand 3 Seater Velvet Sofa",
+            "color": "green",
+            "category": "sofa",
+            "img": "../images/sofa3.jpg",
+            "price": 499,
+            "quantity": 1,
+            "feature": true
+        },
+        {
+            "id": 5,
+            "collection": "Spring/ Summer",
+            "title": "Woodland Double Bed Frame",
+            "color": "beige",
+            "category": "bed",
+            "img": "../images/bed1.jpg",
+            "price": 189,
+            "quantity": 1
+        },
+        {
+            "id": 6,
+            "collection": "Autumn/ Winter",
+            "title": "White & Black Double Bed",
+            "color": ["black", "green"],
+            "category": "bed",
+            "img": "../images/bed2.jpg",
+            "price": 299,
+            "quantity": 1
+        },
+        {
+            "id": 7,
+            "collection": "Autumn/ Winter",
+            "title": "Double Bed Frame- Oak",
+            "color": "beige",
+            "category": "bed",
+            "img": "../images/bed3.jpg",
+            "price": 550,
+            "quantity": 1
+        },
+        {
+            "id": 8,
+            "collection": "Autumn/ Winter",
+            "title": "Kingsize Black Bed",
+            "color": "black",
+            "category": "bed",
+            "img": "../images/bed4.jpg",
+            "price": 590,
+            "quantity": 1
+        },
+        {
+            "id": 9,
+            "collection": "Autumn/ Winter",
+            "title": "Stylish Double Bed",
+            "color": "brown",
+            "category": "bed",
+            "img": "../images/bed5.jpg",
+            "price": 590,
+            "quantity": 1
+        },
+        {
+            "id": 10,
+            "collection": "Spring/ Summer",
+            "title": "Modern Double Bed",
+            "color": "brown",
+            "category": "bed",
+            "img": "../images/bed6.jpg",
+            "price": 390,
+            "quantity": 1
+        },
+        {
+            "id": 11,
+            "collection": "Spring/ Summer",
+            "title": "Royal Bed Kingsize",
+            "color": "white",
+            "category": "bed",
+            "img": "../images/bed7.jpg",
+            "price": 590,
+            "quantity": 1
+        },
+        {
+            "id": 12,
+            "collection": "Spring/ Summer",
+            "title": "White Armchair",
+            "color": "white",
+            "category": "chair",
+            "img": "../images/chair1.jpg",
+            "price": 150,
+            "quantity": 1
+        },
+        {
+            "id": 13,
+            "collection": "Spring/ Summer",
+            "title": "Cocktail Fabric Chair",
+            "color": "yellow",
+            "category": "chair",
+            "img": "../images/chair2.jpg",
+            "price": 250,
+            "quantity": 1
+        },
+        {
+            "id": 14,
+            "collection": "Autumn/ Winter",
+            "title": "WoodLand Velvet Chair",
+            "color": "brown",
+            "category": "chair",
+            "img": "../images/chair3.jpg",
+            "price": 180,
+            "quantity": 1
+        },
+        {
+            "id": 15,
+            "collection": "Autumn/ Winter",
+            "title": "Old Fashioned Chocktail Chair",
+            "color": "yellow",
+            "category": "chair",
+            "img": "../images/chair4.jpg",
+            "price": 120,
+            "quantity": 1
+        },
+        {
+            "id": 16,
+            "collection": "Autumn/ Winter",
+            "title": "Modern Dinning Chair",
+            "color": ["brown", "black"],
+            "category": "chair",
+            "img": "../images/chair5.jpg",
+            "price": 280,
+            "quantity": 1
+        },
+        {
+            "id": 17,
+            "collection": "Autumn/ Winter",
+            "title": "3 Seater Leather Sofa",
+            "color": "brown",
+            "category": "sofa",
+            "img": "../images/sofa2.jpg",
+            "price": 480,
+            "quantity": 1
+        },
+        {
+            "id": 18,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand White Shade",
+            "color": "grey",
+            "category": "lamp",
+            "img":"../images/lamp.jpg",
+            "price": 59,
+            "quantity": 1
+        },
+        {
+            "id": 19,
+            "collection": "Autumn/ Winter",
+            "title": "WoodLand 2 Seater Velvet Sofa",
+            "color": "grey",
+            "category": "sofa",
+            "img": "../images/sofa4.jpg",
+            "price": 519,
+            "quantity": 1
+        },
+        {
+            "id": 20,
+            "collection": "Spring/ Summer",
+            "title": "white Fabric Sofa",
+            "color": "white",
+            "category": "sofa",
+            "img": "../images/sofa5.jpg",
+            "price": 389,
+            "quantity": 1
+        },
+        {
+            "id": 21,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand 3 Seater Sofa",
+            "color": "lavender",
+            "category": "sofa",
+            "img": "../images/sofa6.jpg",
+            "price": 499,
+            "quantity": 1
+        },
+        {
+            "id": 22,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand Velvet Sofa- Beige",
+            "color": "beige",
+            "category": "sofa",
+            "img": "../images/sofa7.jpg",
+            "price":499,
+            "quantity": 1
+        },
+        {
+            "id": 23,
+            "collection": "Autumn/ Winter",
+            "title": "Fabric Sofa with Table",
+            "color": "brown",
+            "category": "sofa",
+            "img": "../images/table1.jpg",
+            "price":399,
+            "quantity": 1
+        },
+        {
+            "id": 24,
+            "collection": "Autumn/ Winter",
+            "title": "Simple White Coffe Table",
+            "color": "white",
+            "category": "table",
+            "img": "../images/table2.jpg",
+            "price":199,
+            "quantity": 1
+        },
+        {
+            "id": 25,
+            "collection": "Autumn/ Winter",
+            "title": "Green Sylish Sofa with Coffe Table",
+            "color": "green",
+            "category":"sofa",
+            "img":"../images/table3.jpg",
+            "price":390,
+            "quantity": 1
+        },
+        {
+            "id": 26,
+            "collection": "Autumn/ Winter",
+            "title": "Fabric Sofa with Coffe Table",
+            "color": "black",
+            "category": "sofa",
+            "img": "../images/table4.jpg",
+            "price":390,
+            "quantity": 1
+        },
+        {
+            "id": 27,
+            "collection": "Spring/ Summer",
+            "title": "Modern Fabric Sofa with Coffe Table",
+            "color": "grey",
+            "category": "sofa",
+            "img": "../images/table5.jpg",
+            "price":490,
+            "quantity": 1
+        },
+        {
+            "id": 28,
+            "collection": "Autumn/ Winter",
+            "title": "WoodLand Fabric Sofa with Coffe Table",
+            "color": "grey",
+            "category": "sofa",
+            "img": "../images/table6.jpg",
+            "price":290,
+            "quantity": 1
+        },
+        {
+            "id": 29,
+            "collection": "Autumn/ Winter",
+            "title": "New WoodLand Furniture",
+            "color": "beige",
+            "category": "sofa",
+            "img": "../images/g.jpg",
+            "price":590,
+            "quantity": 1
+        },
+        {
+            "id": 30,
+            "collection": "Spring/ Summer",
+            "title": "Leather Sofa with Table",
+            "color": "brown",
+            "category": "sofa",
+            "img": "../images/g1.jpg",
+            "price": 419,
+            "quantity": 1
+        },
+        {
+            "id": 31,
+            "collection": "Autumn/ Winter",
+            "title": "Grey Sofa with Table",
+            "color": "grey",
+            "category": "sofa",
+            "img": "../images/g2.jpg",
+            "price":490,
+            "quantity": 1
+        },
+        {
+            "id": 32,
+            "collection": "Spring/ Summer",
+            "title": "Modern Sofa with Table",
+            "color": "white",
+            "category": "sofa",
+            "img": "../images/g3.jpg",
+            "price": 590,
+            "quantity": 1
+        },
+        {
+            "id": 33,
+            "collection": "Spring/ Summer",
+            "title": "New and Modern Furniture",
+            "color": "grey",
+            "category": "sofa",
+            "img": "../images/g4.jpg",
+            "price":690,
+            "quantity": 1
+        },
+        {
+            "id": 34,
+            "collection": "Autumn/ Winter",
+            "title": "WoodLand Table Lamp",
+            "color": "white",
+            "category": "lamp",
+            "img": "../images/bed3.jpg",
+            "price": 28,
+            "quantity": 1
+        },
+        {
+            "id": 35,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand Table Lamp",
+            "color": "grey",
+            "category": "lamp",
+            "img": "../images/bed7.jpg",
+            "price": 50,
+            "quantity": 1
+        },
+        {
+            "id": 36,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand White Table",
+            "color": "white",
+            "category": "table",
+            "img": "../images/sofa5.jpg",
+            "price": 189,
+            "quantity": 1
+        },
+        {
+            "id": 37,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand Table lamp",
+            "color": "lavender",
+            "category": "lamp",
+            "img": "../images/sofa6.jpg",
+            "price": 99,
+            "quantity": 1
+        },
+        {
+            "id": 38,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand Coffe Table-Beige",
+            "color": "beige",
+            "category": "table",
+            "img": "../images/sofa7.jpg",
+            "price":150,
+            "quantity": 1
+        },
+        {
+            "id": 39,
+            "collection": "Autumn/ Winter",
+            "title": "WoodLand Coffe Table",
+            "color": "brown",
+            "category": "table",
+            "img": "../images/table1.jpg",
+            "price":200,
+            "quantity": 1
+        },
+        {
+            "id": 40,
+            "collection": "Autumn/ Winter",
+            "title": "WoodLand Coffe Table",
+            "color": "brown",
+            "category": "table",
+            "img":"../images/table3.jpg",
+            "price":199,
+            "quantity": 1
+        },
+        {
+            "id": 41,
+            "collection": "Autumn/ Winter",
+            "title": "Coffe Table",
+            "color": "brown",
+            "category": "table",
+            "img": "../images/table4.jpg",
+            "price":129,
+            "quantity": 1
+        },
+        {
+            "id": 42,
+            "collection": "Spring/ Summer",
+            "title": "WoodLand Coffe Table",
+            "color": "white",
+            "category": "table",
+            "img": "../images/table5.jpg",
+            "price":129,
+            "quantity": 1
+        },
+    ]
+
+}
