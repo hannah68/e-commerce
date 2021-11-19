@@ -37,9 +37,35 @@ const fetchFeatureeImages = async (featureItem) => {
     try{
         const res = await fetch(`${productsURL}`);
         const data = await res.json();
-        console.log(data);
+        const filteresArr = data.filter(el => el.feature);
+        console.log(filteresArr);
+        const starClass = Math.floor(Math.random()*2)+1;
+        starClass === 1 ? 'fa-star-half-alt': 'fa-star';
+        console.dir(featureItem);
+        featureItem.innerHTML = filteresArr.map(el => 
+            `
+            <img src="${el.img}" alt="${el.title}">
+            <div class="sub-img">
+                <p class="sub-img__title">${el.title}</p>
+                <div class="sub-img__star">
+                    <div class="stars">
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas ${starClass}"></i></span>
+                    </div>
+                    <p>${el.price}</p>
+                </div>
+                <button class="sub-img__btn">More Details</button>
+            </div>
+            `
+        ).join('');
+        
     }
-    catch(e){console.log('something went wrong', e);}
+    catch(e){
+        console.log('something went wrong', e);
+    }
 }
 
 
@@ -54,6 +80,7 @@ const featuresSectionFn = () => {
     const featureItem = document.createElement('div');
     featureItem.classList.add('features-item');
     featureContainer.append(featureItem);
+    homeSection.append(featureSection);
     fetchFeatureeImages(featureItem);
 }
 
