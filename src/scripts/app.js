@@ -3,6 +3,10 @@ const homeSection = document.createElement('div');
 homeSection.classList.add('home-section');
 main.append(homeSection);
 
+const serverURL = 'http://localhost:3000/';
+const productsURL = serverURL + 'products/';
+
+
 const heroSectionFn = () => {
     const heroSection = document.createElement('section');
     heroSection.classList.add('hero-section');
@@ -29,6 +33,15 @@ const heroSectionFn = () => {
 }
 
 
+const fetchFeatureeImages = async (featureItem) => {
+    try{
+        const res = await fetch(`${productsURL}`);
+        const data = await res.json();
+        console.log(data);
+    }
+    catch(e){console.log('something went wrong', e);}
+}
+
 
 const featuresSectionFn = () => {
     const featureSection = document.createElement('section');
@@ -41,7 +54,7 @@ const featuresSectionFn = () => {
     const featureItem = document.createElement('div');
     featureItem.classList.add('features-item');
     featureContainer.append(featureItem);
-
+    fetchFeatureeImages(featureItem);
 }
 
 heroSectionFn();

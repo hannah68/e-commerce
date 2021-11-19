@@ -423,7 +423,7 @@
             "img": "../images/table5.jpg",
             "price":129,
             "quantity": 1
-        },
+        }
     ]
 
 }
