@@ -213,7 +213,9 @@ main{
     display: flex;
     flex-direction: column;
 }
-
+.shop-section.hidden{
+    display: none;
+}
 .search-container{
     margin-bottom: 3rem;
     width: 140rem;
@@ -387,4 +389,109 @@ main{
     outline: none;
     padding: 1rem;
     cursor: pointer;
+}
+/* product info================== */
+.product-item{
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-rows: 1fr;
+    justify-content: center;
+    width: 140rem;
+    margin: 8rem auto;
+}
+.productImg-container{
+    grid-column: 1/2;
+    
+}
+.productImg-container img{
+    width: 70rem;
+}
+.small-images{
+    width: 70rem;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.small-images img{
+    width: 8rem;
+}
+
+.arrow-left i,
+.arrow-right i{
+    font-size: 2rem;
+}
+
+.productInfo-container{
+    grid-column: 2/-1;
+    font-size: 2rem;
+}
+.productInfo-title,
+.productInfo-price{
+    margin-bottom: 2rem;
+}
+
+.productInfo-text{
+    line-height: 1.7;
+}
+
+.productInfo-colors{
+    margin: 2rem 0;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.productInfo-colors .circle{
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border:1px solid #000;
+}
+.productInfo-size{
+    padding: 2rem;
+}
+.productInfo-select{
+    display: flex;
+    justify-content: space-between;
+    gap: 4rem;
+    margin-top: 4rem;
+    font-size: 2rem;
+}
+
+.productInfo-select input{
+    width: 50%;
+    padding: 1rem;
+}
+.productInfo-select button{
+    width: 70%;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.Blue{
+    background-color: blue;
+}
+.Brown{
+    background-color: brown;
+}
+.Green{
+    background-color: green;
+}
+.Black{
+    background-color: black;
+}
+.Beige{
+    background-color: beige;
+}
+.Pink{
+    background-color: pink;
+}
+.Yellow{
+    background-color: yellow;
+}
+.Grey{
+    background-color: grey;
+}
+.Lavender{
+    background-color: lavender;
 }

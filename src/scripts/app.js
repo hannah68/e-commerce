@@ -3,13 +3,27 @@ const homeSection = document.createElement('div');
 homeSection.classList.add('home-section');
 const shopSection = document.createElement('div')
 shopSection.classList.add('shop-section');
+const productSection = document.createElement('div')
+productSection.classList.add('product-info-section');
 main.append(homeSection);
+
+const productInfos = {
+    text: ' Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus sed facilis ullam, a alias voluptas similique nesciunt qui vel?voluptas similique nesciunt laboriosam natus aliquid nam blanditiis esse autem omnis incidunt voluptate? Dicta, qui vel?',
+    size: [
+        'Dimensions: W: 207 cm D:56 cm H:221 cm',
+        'Seat Dimensions: W: 184 cm D:134 cm H:175 cm',
+        'Weight: 5 kg',
+        'Materials: Metal, Steel',
+        'Filling materials: Concrete, Frozen, Fresh, Steel',
+        'Comfort level: Medium'
+    ]
+}
 
 // filtere items======================================
 const filterItems = {
     collection: ['Spring-Summer', 'Autumn-Winter'],
     color: ['Pink', 'Blue', 'White', 'Green', 'Beige', 'Black', 'Brown', 'Yellow', 'Grey','Lavender'],
-    category: ['Chair', 'Table', 'Bed','Lamp','Sofa']
+    category: ['Chair', 'Table', 'Bed','Lamp','Sofa'],
 }
 
 // server=========================================
@@ -248,9 +262,11 @@ const createProductItem = (productContainer, data, item) => {
             </div>
             <p class="product__price">£${eachItem.price}</p>
         </div>
-        <button class="product__btn">More Details</button>
+        <button class="product__btn" dataId="${eachItem.id}">More Details</button>
     `
     productContainer.insertAdjacentElement('beforeend', product);
+    const detailBtn = document.querySelector('.product__btn');
+    listenToMoreDetailsBtn(detailBtn,eachItem);
 }
 
 // fetch products from db.json file==========================
@@ -334,7 +350,70 @@ const listenToClickFilterFn = () => {
     listenToClickCategoryIcon();
 }
 
+// listen to more details button=======================
+const listenToMoreDetailsBtn = (detailBtn,eachItem) => {
+    detailBtn.addEventListener('click', () => {
+        shopSection.classList.add('hidden');
+        main.append(productSection);
+        const btnId = detailBtn.attributes[1].value;
+        if(eachItem.id === Number(btnId)){
+            createProductInfo(eachItem);
+        }
+    })
+}
 
 
+// create product info /html==================
+const createProductInfo = (eachItem) => {
+    const productItem = document.createElement('section');
+    productItem.classList.add('product-item');
+    productSection.append(productItem);
+    const productImgContainer = document.createElement('div');
+    productImgContainer.classList.add('productImg-container');
+    productImgContainer.innerHTML = `
+        <img src="${eachItem.img}" alt="${eachItem.title}">
+        <div class="small-images">
+            <span class="arrow-left"><i class="fas fa-chevron-left"></i></span>
+            <img src="./assets/images/sofa3.jpg" alt="">
+            <img src="./assets/images/table3.jpg" alt="">
+            <img src="./assets/images/sofa1.jpg" alt="">
+            <img src="./assets/images/table5.jpg" alt="">
+            <span class="arrow-right"><i class="fas fa-chevron-right"></i></span>
+        </div>
+    `
+    const productInfoContainer = document.createElement('div');
+    productInfoContainer.classList.add('productInfo-container');
+    productItem.append(productImgContainer, productInfoContainer);
+    createProductInfoText(productInfoContainer,eachItem);
+}
+
+// create product info text======================================
+const createProductInfoText = (productInfoContainer,eachItem) => {
+    productInfoContainer.innerHTML = `
+    <h2 class="productInfo-title">${eachItem.title}</h2>
+    <h3 class="productInfo-price">£${eachItem.price}</h3>
+    <p class="productInfo-text">${productInfos.text}</p>
+    `;
+    const productInfoSize = document.createElement('ul');
+    productInfoSize.classList.add('productInfo-size');
+    productInfoSize.innerHTML = productInfos.size.map(el => {
+        return `<li>${el}</li>`
+    }).join('');
+    
+    const productInfoColors = document.createElement('div');
+    productInfoColors.classList.add('productInfo-colors');
+    productInfoColors.innerHTML = filterItems.color.map(el => {
+        return `<span class="circle ${el}"></span>`
+    }).join('');
+
+    const productInfoSelect = document.createElement('div');
+    productInfoSelect.classList.add('productInfo-select');
+    productInfoSelect.innerHTML = `
+        <input type="number" name="num" id="num">
+        <button>Add to basket</button>
+    `;
+    productInfoContainer.append(productInfoSize, productInfoColors,productInfoSelect);
+
+}
 
 
