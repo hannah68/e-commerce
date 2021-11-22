@@ -29,6 +29,7 @@ const filterItems = {
 // server=========================================
 const serverURL = 'http://localhost:3000/';
 const productsURL = serverURL + 'products/';
+const shopUrl = serverURL + 'shops/'
 
 // create hero section============================
 const heroSectionFn = () => {
@@ -50,7 +51,7 @@ const heroSectionFn = () => {
     const heroImage = document.createElement('div');
     heroImage.classList.add('hero-section__img');
     const heroImg = document.createElement('img');
-    heroImg.src = './assets/images/chair1.jpg';
+    heroImg.src = './src/assets/images/chair1.jpg';
     heroImg.setAttribute('alt', 'chair image');
     heroImage.append(heroImg);
     heroSection.append(heroText, heroImage);
@@ -62,33 +63,43 @@ const randomFn = () => {
     return starClass === 1 ? 'fas fa-star-half-alt' : 'fas fa-star';
 }
 
+
+
+
+
+const createHeroImageSection = (filteredArr,featureContainer) => {
+    featureContainer.innerHTML = filteredArr.map(el => {
+        return`
+        <div class="features-item">
+            <img src="${el.img}" alt="${el.title}">
+            <div class="sub-img">
+                <p class="sub-img__title">${el.title}</p>
+                <div class="sub-img__star">
+                    <div class="stars">
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="${randomFn()}"></i></span>
+                    </div>
+                    <p>£${el.price}</p>
+                </div>
+                <button class="sub-img__btn">More Details</button>
+            </div>
+        </div>
+        `;
+            
+    }).join('');
+}
+
+
 // fetch images for feature section===============================
 const fetchFeatureImages = async (featureContainer) => {
     try{
         const res = await fetch(`${productsURL}`);
         const data = await res.json();
-        const filteresArr = data.filter(el => el.feature);
-        featureContainer.innerHTML = filteresArr.map(el =>
-            `
-            <div class="features-item">
-                <img src="${el.img}" alt="${el.title}">
-                <div class="sub-img">
-                    <p class="sub-img__title">${el.title}</p>
-                    <div class="sub-img__star">
-                        <div class="stars">
-                            <span><i class="fas fa-star"></i></span>
-                            <span><i class="fas fa-star"></i></span>
-                            <span><i class="fas fa-star"></i></span>
-                            <span><i class="fas fa-star"></i></span>
-                            <span><i class="${randomFn()}"></i></span>
-                        </div>
-                        <p>£${el.price}</p>
-                    </div>
-                    <button class="sub-img__btn">More Details</button>
-                </div>
-            </div>
-            `
-        ).join('');
+        const filteredArr = data.filter(el => el.feature === true);
+        createHeroImageSection(filteredArr,featureContainer)
     }
     catch(e){
         console.log('something went wrong', e);
@@ -112,7 +123,15 @@ const featuresSectionFn = () => {
 const listenToShopBtn = () => {
     const shopBtn = document.querySelector('.hero-section__text--btn');
     shopBtn.addEventListener('click', ()=>{
-        homeSection.classList.add('hidden');
+        // homeSection.classList.add('hidden');
+        shopPageFn();
+    });
+}
+
+const listenToShopBtnNavbar = () => {
+    const shopBtnNavbar = document.querySelector('#shopBtn');
+    shopBtnNavbar.addEventListener('click', ()=>{
+        // homeSection.classList.add('hidden');
         shopPageFn();
     });
 }
@@ -121,13 +140,16 @@ const listenToShopBtn = () => {
 const init = () => {
     heroSectionFn();
     featuresSectionFn();
-    listenToShopBtn()
+    listenToShopBtn();
+    listenToShopBtnNavbar();
 }
 init()
 
 // ===============================================
 
 const shopPageFn = () => {
+    main.innerHTML = '';
+    shopSection.innerHTML = '';
     main.append(shopSection);
     SearchSectionFn();
     filterSectionFn();
@@ -244,6 +266,30 @@ const randomFnForProducts = () => {
     return numIndex;
 }
 
+// fetch products from db.json file==========================
+const fetchProducts = async (productContainer) => {
+    try{
+        const res = await fetch(`${productsURL}`);
+        const data = await res.json();
+        console.log(data);
+        const productArr = randomFnForProducts();
+        for(let i=0; i<productArr.length; i++){
+            const item = productArr[i];
+            createProductItem(productContainer, data, item)
+        }
+    }
+    catch(e){
+        console.log('something went wrong', e);
+    }
+}
+
+// delete fetch=========
+// const deleteFetch = () => {
+//     fetch(`${shopUrl}`, {
+//         method: 'DELETE'
+//      })
+// }
+
 // create product items html==================================
 const createProductItem = (productContainer, data, item) => {
     const eachItem = data.find(el => data.indexOf(el) === item);
@@ -269,22 +315,6 @@ const createProductItem = (productContainer, data, item) => {
     listenToMoreDetailsBtn(detailBtn,eachItem);
 }
 
-// fetch products from db.json file==========================
-const fetchProducts = async (productContainer) => {
-    try{
-        const res = await fetch(`${productsURL}`);
-        const data = await res.json();
-        console.log(data);
-        const productArr = randomFnForProducts();
-        for(let i=0; i<productArr.length; i++){
-            const item = productArr[i];
-            createProductItem(productContainer, data, item)
-        }
-    }
-    catch(e){
-        console.log('something went wrong', e);
-    }
-}
 
 // listen To Click Collection Icon==========================
 const listenToClickCollectionIcon = () => {
@@ -353,7 +383,8 @@ const listenToClickFilterFn = () => {
 // listen to more details button=======================
 const listenToMoreDetailsBtn = (detailBtn,eachItem) => {
     detailBtn.addEventListener('click', () => {
-        shopSection.classList.add('hidden');
+        // shopSection.classList.add('hidden');
+        main.innerHTML = '';
         main.append(productSection);
         const btnId = detailBtn.attributes[1].value;
         if(eachItem.id === Number(btnId)){
@@ -365,6 +396,7 @@ const listenToMoreDetailsBtn = (detailBtn,eachItem) => {
 
 // create product info /html==================
 const createProductInfo = (eachItem) => {
+    productSection.innerHTML = '';
     const productItem = document.createElement('section');
     productItem.classList.add('product-item');
     productSection.append(productItem);
@@ -374,10 +406,10 @@ const createProductInfo = (eachItem) => {
         <img src="${eachItem.img}" alt="${eachItem.title}">
         <div class="small-images">
             <span class="arrow-left"><i class="fas fa-chevron-left"></i></span>
-            <img src="./assets/images/sofa3.jpg" alt="">
-            <img src="./assets/images/table3.jpg" alt="">
-            <img src="./assets/images/sofa1.jpg" alt="">
-            <img src="./assets/images/table5.jpg" alt="">
+            <img src="./src/assets/images/sofa3.jpg" alt="">
+            <img src="./src/assets/images/table3.jpg" alt="">
+            <img src="./src/assets/images/sofa1.jpg" alt="">
+            <img src="./src/assets/images/table5.jpg" alt="">
             <span class="arrow-right"><i class="fas fa-chevron-right"></i></span>
         </div>
     `
@@ -408,12 +440,53 @@ const createProductInfoText = (productInfoContainer,eachItem) => {
 
     const productInfoSelect = document.createElement('div');
     productInfoSelect.classList.add('productInfo-select');
-    productInfoSelect.innerHTML = `
-        <input type="number" name="num" id="num">
-        <button>Add to basket</button>
+    productInfoSelect.innerHTML = 
+    `
+        <input type="number" name="num" id="num" class="num">
+        <button class="add-btn" id="${eachItem.id}">Add to basket</button>
     `;
+    
     productInfoContainer.append(productInfoSize, productInfoColors,productInfoSelect);
-
+    
+    listenToAddToBasket();
+    listenToShopBtnNavbar();
 }
 
+// listen to add to basket button===========================
+const listenToAddToBasket = () => {
+    const addBtn = document.querySelector('.add-btn');
+    const numInput = document.querySelector('.num');
+    
+    addBtn.addEventListener('click', () => {
+        const numValue = numInput.value;
+        const itemId = addBtn.id;
+        showNumsOnBasket(numValue, itemId);
+    })
+}
 
+// show nums on basket===================================
+const showNumsOnBasket = (numValue, itemId) => {
+    const basketNum = document.querySelector('.basket-num');
+    basketNum.classList.add('show');
+    basketNum.innerText = `${numValue}`;
+    listenToClickBasket(numValue, itemId);
+}
+
+// shopping card state===================================
+let shopping_basketState = {
+    selectedItems: []
+};
+
+// update state=========================================
+const updateState = (newState) => {
+    shopping_basketState = {...shopping_basketState, ...newState};
+    console.log(shopping_basketState);
+}
+// listen to click basket===============================
+const listenToClickBasket = (numValue, itemId) => {
+    const navbarIcon = document.querySelector('.navbar__icon');
+    navbarIcon.addEventListener('click', () => {
+
+    })
+
+}

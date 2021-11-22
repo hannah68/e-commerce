@@ -54,6 +54,28 @@ body{
 .navbar__icon{
     padding: 1rem 0;
 }
+.navbar__icon{
+    position: relative;
+}
+.navbar__icon span i {
+    font-size: 2.5rem;
+}
+
+.basket-num{
+    background-color: red;
+    border-radius: 50%;
+    color: #fff;
+    width: 2rem;
+    height: 2rem;
+    text-align: center;
+    position: absolute;
+    bottom: 3rem;
+    left: 2rem;
+    display: none;
+}
+.basket-num.show{
+    display: block;
+}
 
 /* main====================== */
 main{
@@ -404,17 +426,18 @@ main{
     
 }
 .productImg-container img{
-    width: 70rem;
+    width: 72rem;
 }
 .small-images{
-    width: 70rem;
-    margin-top: 2rem;
+    width: 72rem;
+    margin-top: 2.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 .small-images img{
-    width: 8rem;
+    width: 10rem;
+    height: 8rem;
 }
 
 .arrow-left i,
