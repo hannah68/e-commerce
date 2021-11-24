@@ -64,9 +64,6 @@ const randomFn = () => {
 }
 
 
-
-
-
 const createHeroImageSection = (filteredArr,featureContainer) => {
     featureContainer.innerHTML = filteredArr.map(el => {
         return`
@@ -458,18 +455,21 @@ const listenToAddToBasket = () => {
     const numInput = document.querySelector('.num');
     
     addBtn.addEventListener('click', () => {
-        const numValue = numInput.value;
-        const itemId = addBtn.id;
-        showNumsOnBasket(numValue, itemId);
+        let itemIdArray = []
+        const quantityValue = Number(numInput.value);
+        const itemId = Number(addBtn.id);
+        itemIdArray.push(itemId);
+        showNumsOnBasket(quantityValue, itemIdArray);
     })
 }
 
 // show nums on basket===================================
-const showNumsOnBasket = (numValue, itemId) => {
+const showNumsOnBasket = (quantityValue, itemIdArray) => {
     const basketNum = document.querySelector('.basket-num');
     basketNum.classList.add('show');
-    basketNum.innerText = `${numValue}`;
-    listenToClickBasket(numValue, itemId);
+    let val = Number(basketNum.innerText);
+    basketNum.innerText = `${val += quantityValue}`;
+    listenToClickBasket(quantityValue, itemIdArray);
 }
 
 // shopping card state===================================
@@ -482,11 +482,139 @@ const updateState = (newState) => {
     shopping_basketState = {...shopping_basketState, ...newState};
     console.log(shopping_basketState);
 }
+
+
+let basketArr =[];
+
 // listen to click basket===============================
-const listenToClickBasket = (numValue, itemId) => {
+const listenToClickBasket = (quantityValue, itemIdArray) => {
     const navbarIcon = document.querySelector('.navbar__icon');
     navbarIcon.addEventListener('click', () => {
-
+        fetch(`${productsURL}`)
+            .then(res => res.json())
+            .then(data => {
+                for(itemId of itemIdArray){
+                    data.map(el => {
+                        if(el.id === itemId){
+                            if(basketArr.length > 0){
+                                basketArr = [];
+                                el.quantity += quantityValue
+                                basketArr.push(el);
+                            }else{
+                                el.quantity += quantityValue
+                                basketArr.push(el);
+                            }
+                        }
+                    });
+                }
+                let newState = {selectedItems: basketArr}
+                updateState(newState);
+                createShoppingCart();
+            })
     })
+}
 
+// empty popup==========================================
+const emptyPopUp =() => {
+    const popup = document.querySelector('.popup');
+    if(popup !== null){
+        popup.remove();
+    }
+    
+}
+
+// create shoping basket==================================
+const createShoppingCart = () => {
+    emptyPopUp();
+    const popup = document.createElement('div');
+    popup.classList.add('popup');
+    main.append(popup);
+    const popupContainer = document.createElement('div');
+    popupContainer.classList.add('popup__container');
+    popup.append(popupContainer);
+    const popupTop = document.createElement('div');
+    popupTop.classList.add('popup__top');
+    popupTop.innerHTML = `
+        <h1 class="popup__name">Shopping Bag</h1>
+        <a href="#" class="popup__close">&times;</a>
+    `;
+    const popupContentContainer = document.createElement('div');
+    popupContentContainer.classList.add('popup__content-container');
+    popupContainer.append(popupTop, popupContentContainer);
+    calcualteTotal(popupContentContainer);
+    listenToCloseBasket();
+}
+
+// calculate total and items==============================
+const calcualteTotal = (popupContentContainer) => {
+    const cartItems = shopping_basketState.selectedItems;
+    console.log(cartItems);
+
+    cartItems.map(el => {
+        const price = (el.price * el.quantity).toFixed(2);
+        el.total = Number(price);
+        console.log(el);
+    });
+
+    const totalArr = cartItems.map(el => el.total);
+    const totalItems = totalArr.reduce((acc,curr) => acc+curr);
+    console.log(totalItems);
+
+    const QuantityArr = cartItems.map(el => el.quantity);
+    const totalQuantity = QuantityArr.reduce((acc,curr) => acc+curr);
+    createPopupContents(popupContentContainer, totalItems,totalQuantity,cartItems);
+}
+
+
+// create Popup Contents============================
+const createPopupContents = (popupContentContainer, totalItems,totalQuantity,cartItems) => {
+    
+    popupContentContainer.innerHTML = cartItems.map(el =>
+        `
+        <div class="popup__content">
+            <div class="img-container">
+                <img src="${el.img}" alt="${el.title}" class="popup__content--img">
+                <div class="popup__content--info">
+                    <h3 class="popup-title">${el.title}</h3>
+                    <p class="popup-price">£${el.price}</p>
+                </div>
+            </div>
+            <div class="popup-quantity">
+                <span class="popup-minus"><i class="fas fa-minus-circle"></i></span>
+                <input type="text" class="quantity" value="${el.quantity}">
+                <span class="popup-plus"><i class="fas fa-plus-circle"></i></span>
+            </div>
+            <p class="final-price">£${el.total}</p>
+        </div>
+        `
+    ).join('');
+    
+    const totalContainer = document.createElement('div');
+    totalContainer.classList.add('total-container');
+    totalContainer.innerHTML = `
+        <div class="total-title">
+            <span>Items</span>
+            <span>Total</span>
+        </div>
+        <div class="total-input">
+            <span class="total-quantity">${totalQuantity}</span>
+            <span class="total-input-item">£${totalItems}</span>
+        </div>
+    `;
+
+    const checkOutBtn = document.createElement('button');
+    checkOutBtn.classList.add('checkout-btn');
+    checkOutBtn.innerText = 'Continue To Checkout';
+    popupContentContainer.append(totalContainer, checkOutBtn);
+    
+}
+
+// listen to close basket===============================
+const listenToCloseBasket = ()=> {
+    const closeShoppingCart = document.querySelector('.popup__close');
+    const popUp = document.querySelector('.popup');
+    closeShoppingCart.addEventListener('click', () => {
+        popUp.classList.remove('hidden');
+        popUp.classList.add('hidden');
+    })
 }
