@@ -154,17 +154,19 @@ main{
 }
 
 .features-container{
+    width: 114rem;
     display: grid;
     grid-template-columns: repeat(4,auto);
     grid-template-rows: 1fr;
     justify-content: center;
     align-items: center;
     gap: 15rem;
+    margin: 0 auto;
 }
 
-/* .features-item{
+.features-item{
     
-} */
+}
 
 .features-item img{
     width: 25rem;
@@ -173,17 +175,22 @@ main{
 .sub-img{
     display: flex;
     flex-direction: column;
-    font-size: 2rem;
+    font-size: 1.6rem;
     padding-top: 1rem;
+}
+.sub-img__title{
+    padding-bottom: 1rem;
 }
 
 .sub-img__star{
     display: flex;
     justify-content: space-between;
+    padding-bottom: 1rem;
 }
 
 .sub-img__btn{
     cursor: pointer;
+    padding: 5px 0;
 }
 
 /* footer */
@@ -226,6 +233,15 @@ main{
 .footer__logo,
 .footer__icon{
     padding: 1rem 0;
+}
+
+.footer__icon{
+    display: flex;
+    gap: 1rem;
+}
+
+.footer__icon i{
+    font-size: 2rem;
 }
 
 

@@ -268,7 +268,6 @@ const fetchProducts = async (productContainer) => {
     try{
         const res = await fetch(`${productsURL}`);
         const data = await res.json();
-        console.log(data);
         const productArr = randomFnForProducts();
         for(let i=0; i<productArr.length; i++){
             const item = productArr[i];
@@ -485,7 +484,6 @@ const updateState = (newState) => {
 
 
 let basketArr =[];
-
 // listen to click basket===============================
 const listenToClickBasket = (quantityValue, itemIdArray) => {
     const navbarIcon = document.querySelector('.navbar__icon');
@@ -496,31 +494,114 @@ const listenToClickBasket = (quantityValue, itemIdArray) => {
                 for(itemId of itemIdArray){
                     data.map(el => {
                         if(el.id === itemId){
-                            if(basketArr.length > 0){
-                                basketArr = [];
-                                el.quantity += quantityValue
-                                basketArr.push(el);
-                            }else{
-                                el.quantity += quantityValue
-                                basketArr.push(el);
-                            }
+                            el.quantity += quantityValue
+                            el.total = Number((el.quantity * el.price).toFixed(2));
+                            basketArr.push(el);
                         }
                     });
                 }
-                let newState = {selectedItems: basketArr}
+                let unique = ([...new Set(basketArr.map(JSON.stringify))]).map(JSON.parse);
+                let newState = {selectedItems: unique}
                 updateState(newState);
                 createShoppingCart();
             })
     })
 }
 
+// listen to plus button=======================================
+const listenToPlusButton = (quantity, finalPrice) => {
+    const elementId = Number(quantity.parentElement.id);
+    const updatedArr = basketArr.map(el => {
+        if(el.id === elementId){
+            el.quantity += 1
+            el.total = Number((el.quantity * el.price).toFixed(2));
+            quantity.value = el.quantity;
+            finalPrice.innerText = `£${el.total}`;
+        }
+        return el;
+    });
+
+    let unique = ([...new Set(updatedArr.map(JSON.stringify))]).map(JSON.parse);
+    let newState = {selectedItems: unique}
+    updateState(newState);
+    
+    const cartItems = shopping_basketState.selectedItems;
+    const updateTotalArr = cartItems.map(el => Number(el.total));
+    const updatedTotal = updateTotalArr.reduce((acc,curr) => acc+curr);
+        
+    const updateQuantityArr = cartItems.map(el => el.quantity);
+    const updatedQuantity = updateQuantityArr.reduce((acc,curr) => acc+curr);
+    const totalQuantity = document.querySelector('.total-quantity');
+    const totalInput = document.querySelector('.total-input-item');
+    totalInput.innerText = `£${updatedTotal}`;
+    totalQuantity.innerText = updatedQuantity;
+}
+
+
+// listen to minus button==========================================
+const listenToMinusButton = (quantity, finalPrice) => {
+    const elementId = Number(quantity.parentElement.id);
+    const cartItems = shopping_basketState.selectedItems;
+    
+    const updatedArr = basketArr.map(el => {
+        if(el.id === elementId){
+            if(el.quantity > 1){
+                el.quantity -= 1
+                el.total = Number((el.quantity * el.price).toFixed(2));
+                quantity.value = el.quantity;
+                finalPrice.innerText = `£${el.total}`;
+            }
+            else if(el.quantity <= 1){
+                const idx = basketArr.indexOf(el);
+                basketArr.splice(idx,1);
+                finalPrice.parentElement.remove();
+            }
+        }
+        return el;
+    });
+
+    
+    
+    const me = (new Set(updatedArr)).size;
+    console.log(me);
+    if(me !== updatedArr.length){
+        let unique = ([...new Set(updatedArr.map(JSON.stringify))]).map(JSON.parse);
+        let newState = {selectedItems: unique};
+        updateState(newState);
+    }else{
+        let newState = {selectedItems: updateState};
+        updateState(newState);
+    }
+
+    if(updatedArr.length === 1){
+        const container = document.querySelector('.popup__content-container');
+        container.innerHTML = '';
+        const h2El = document.createElement('h2');
+        h2El.innerText = 'Hi, Your shopping basket is empty!';
+        basketArr = [];
+        container.append(h2El);
+    }
+    
+    
+    console.log(updatedArr);
+
+    // const cartItems = shopping_basketState.selectedItems;
+    const updateTotalArr = updatedArr.map(el => Number(el.total));
+    const updatedTotal = updateTotalArr.reduce((acc,curr) => acc+curr);
+        
+    const updateQuantityArr = updatedArr.map(el => el.quantity);
+    const updatedQuantity = updateQuantityArr.reduce((acc,curr) => acc+curr);
+    const totalQuantity = document.querySelector('.total-quantity');
+    const totalInput = document.querySelector('.total-input-item');
+    totalInput.innerText = `£${updatedTotal}`;
+    totalQuantity.innerText = updatedQuantity;
+}
 // empty popup==========================================
 const emptyPopUp =() => {
     const popup = document.querySelector('.popup');
     if(popup !== null){
         popup.remove();
     }
-    
 }
 
 // create shoping basket==================================
@@ -548,17 +629,14 @@ const createShoppingCart = () => {
 // calculate total and items==============================
 const calcualteTotal = (popupContentContainer) => {
     const cartItems = shopping_basketState.selectedItems;
-    console.log(cartItems);
 
     cartItems.map(el => {
         const price = (el.price * el.quantity).toFixed(2);
         el.total = Number(price);
-        console.log(el);
     });
 
     const totalArr = cartItems.map(el => el.total);
     const totalItems = totalArr.reduce((acc,curr) => acc+curr);
-    console.log(totalItems);
 
     const QuantityArr = cartItems.map(el => el.quantity);
     const totalQuantity = QuantityArr.reduce((acc,curr) => acc+curr);
@@ -568,7 +646,6 @@ const calcualteTotal = (popupContentContainer) => {
 
 // create Popup Contents============================
 const createPopupContents = (popupContentContainer, totalItems,totalQuantity,cartItems) => {
-    
     popupContentContainer.innerHTML = cartItems.map(el =>
         `
         <div class="popup__content">
@@ -579,16 +656,50 @@ const createPopupContents = (popupContentContainer, totalItems,totalQuantity,car
                     <p class="popup-price">£${el.price}</p>
                 </div>
             </div>
-            <div class="popup-quantity">
-                <span class="popup-minus"><i class="fas fa-minus-circle"></i></span>
-                <input type="text" class="quantity" value="${el.quantity}">
-                <span class="popup-plus"><i class="fas fa-plus-circle"></i></span>
-            </div>
-            <p class="final-price">£${el.total}</p>
         </div>
         `
     ).join('');
     
+    cartItems.map(el => {
+        const popupContent = document.querySelector('.popup__content');
+
+        const popupQuantity = document.createElement('div');
+        popupQuantity.classList.add('popup-quantity');
+        popupQuantity.setAttribute('id', `${el.id}`);
+        
+
+        const popupMinus = document.createElement('span');
+        popupMinus.classList.add('popup-minus');
+        popupMinus.innerHTML = `<i class="fas fa-minus-circle"></i>`;
+
+        const popupPlus = document.createElement('span');
+        popupPlus.classList.add('popup-plus');
+        popupPlus.innerHTML = `<i class="fas fa-plus-circle"></i>`;
+
+        const quantity = document.createElement('input');
+        quantity.classList.add('quantity');
+        quantity.setAttribute('id', `${el.id}`);
+        quantity.setAttribute('value', `${el.quantity}`);
+        quantity.setAttribute('type', 'text');
+
+        popupQuantity.append(popupMinus, quantity, popupPlus);
+
+        const finalPrice = document.createElement('p');
+        finalPrice.classList.add('final-price');
+        finalPrice.innerText= `£${el.total}`;
+
+        popupContent.append(popupQuantity, finalPrice);
+
+        popupPlus.addEventListener('click', () => {
+            listenToPlusButton(quantity, finalPrice);
+        });
+        popupMinus.addEventListener('click', () => {
+            listenToMinusButton(quantity, finalPrice);
+        });
+        popupContentContainer.append(popupContent)
+    })
+    
+
     const totalContainer = document.createElement('div');
     totalContainer.classList.add('total-container');
     totalContainer.innerHTML = `
@@ -601,10 +712,10 @@ const createPopupContents = (popupContentContainer, totalItems,totalQuantity,car
             <span class="total-input-item">£${totalItems}</span>
         </div>
     `;
-
     const checkOutBtn = document.createElement('button');
     checkOutBtn.classList.add('checkout-btn');
     checkOutBtn.innerText = 'Continue To Checkout';
+
     popupContentContainer.append(totalContainer, checkOutBtn);
     
 }
@@ -614,7 +725,20 @@ const listenToCloseBasket = ()=> {
     const closeShoppingCart = document.querySelector('.popup__close');
     const popUp = document.querySelector('.popup');
     closeShoppingCart.addEventListener('click', () => {
-        popUp.classList.remove('hidden');
         popUp.classList.add('hidden');
     })
 }
+
+
+const navbarLogo = document.querySelector('.navbar__logo');
+const home = document.querySelector('.home-page');
+
+navbarLogo.addEventListener('click',() =>{
+    main.innerHTML = '';
+    main.append(homeSection);
+});
+
+home.addEventListener('click',() =>{
+    main.innerHTML = '';
+    main.append(homeSection);
+})
