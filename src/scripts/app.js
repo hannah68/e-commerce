@@ -7,6 +7,18 @@ const productSection = document.createElement('div')
 productSection.classList.add('product-info-section');
 main.append(homeSection);
 
+// shopping card state===================================
+let shopping_basketState = {
+    selectedItems: []
+};
+
+// update state=========================================
+const updateState = (newState) => {
+    shopping_basketState = {...shopping_basketState, ...newState};
+    console.log(shopping_basketState);
+}
+
+// product info ====================================
 const productInfos = {
     text: ' Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus sed facilis ullam, a alias voluptas similique nesciunt qui vel?voluptas similique nesciunt laboriosam natus aliquid nam blanditiis esse autem omnis incidunt voluptate? Dicta, qui vel?',
     size: [
@@ -19,7 +31,7 @@ const productInfos = {
     ]
 }
 
-// filtere items======================================
+// filtere items==================================
 const filterItems = {
     collection: ['Spring-Summer', 'Autumn-Winter'],
     color: ['Pink', 'Blue', 'White', 'Green', 'Beige', 'Black', 'Brown', 'Yellow', 'Grey','Lavender'],
@@ -63,7 +75,7 @@ const randomFn = () => {
     return starClass === 1 ? 'fas fa-star-half-alt' : 'fas fa-star';
 }
 
-
+// create Hero Image =============================
 const createHeroImageSection = (filteredArr,featureContainer) => {
     featureContainer.innerHTML = filteredArr.map(el => {
         return`
@@ -89,8 +101,7 @@ const createHeroImageSection = (filteredArr,featureContainer) => {
     }).join('');
 }
 
-
-// fetch images for feature section===============================
+// fetch images for feature section=======================
 const fetchFeatureImages = async (featureContainer) => {
     try{
         const res = await fetch(`${productsURL}`);
@@ -120,17 +131,32 @@ const featuresSectionFn = () => {
 const listenToShopBtn = () => {
     const shopBtn = document.querySelector('.hero-section__text--btn');
     shopBtn.addEventListener('click', ()=>{
-        // homeSection.classList.add('hidden');
         shopPageFn();
     });
 }
 
+// listen to Logo =======================================
 const listenToShopBtnNavbar = () => {
     const shopBtnNavbar = document.querySelector('#shopBtn');
     shopBtnNavbar.addEventListener('click', ()=>{
-        // homeSection.classList.add('hidden');
         shopPageFn();
     });
+}
+
+// back to home function=================================
+const backToHomeFn = () => {
+    const navbarLogo = document.querySelector('.navbar__logo');
+    const home = document.querySelector('.home-page');
+
+    navbarLogo.addEventListener('click',() =>{
+        main.innerHTML = '';
+        main.append(homeSection);
+    });
+
+    home.addEventListener('click',() =>{
+        main.innerHTML = '';
+        main.append(homeSection);
+    })
 }
 
 // init app=======================================
@@ -139,11 +165,12 @@ const init = () => {
     featuresSectionFn();
     listenToShopBtn();
     listenToShopBtnNavbar();
+    backToHomeFn();
 }
-init()
+init();
 
-// ===============================================
 
+// shop page functions==============================
 const shopPageFn = () => {
     main.innerHTML = '';
     shopSection.innerHTML = '';
@@ -172,6 +199,7 @@ const SearchSectionFn = () => {
     sortBtn.innerText = 'Sort By';
     searchSort.append(sortBtn);
 }
+
 // create filter section============================
 const filterSectionFn = () => {
     const container = document.createElement('section');
@@ -182,7 +210,6 @@ const filterSectionFn = () => {
     container.append(filterContainer);
     const h2El = document.createElement('h2');
     h2El.innerText = 'Filtered by';
-    // create form
     const form = document.createElement('form');
     form.classList.add('filter__collection');
     filterContainer.append(h2El,form);
@@ -201,12 +228,6 @@ const filteredFormSectionFn = (form) => {
         `
     }).join('');
 }
-
-function setAttributes(el, attrs) {
-    for(var key in attrs) {
-      el.setAttribute(key, attrs[key]);
-    }
-  }
 
 // create price filter section==========================
 const filterPriceSection = (form) => {
@@ -279,13 +300,6 @@ const fetchProducts = async (productContainer) => {
     }
 }
 
-// delete fetch=========
-// const deleteFetch = () => {
-//     fetch(`${shopUrl}`, {
-//         method: 'DELETE'
-//      })
-// }
-
 // create product items html==================================
 const createProductItem = (productContainer, data, item) => {
     const eachItem = data.find(el => data.indexOf(el) === item);
@@ -311,6 +325,12 @@ const createProductItem = (productContainer, data, item) => {
     listenToMoreDetailsBtn(detailBtn,eachItem);
 }
 
+// listen for filter functions=================================
+const listenToClickFilterFn = () => {
+    listenToClickCollectionIcon();
+    listenToClickColorIcon();
+    listenToClickCategoryIcon();
+}
 
 // listen To Click Collection Icon==========================
 const listenToClickCollectionIcon = () => {
@@ -325,8 +345,10 @@ const listenToClickCollectionIcon = () => {
     parent.insertBefore(collectionList, collectionMenu.nextSibling);
     iconCollection.addEventListener('click', () => {
         collectionList.classList.toggle('show');
-    })
+        collectionMenu.classList.toggle('removeBorder');
+    });
 }
+
 // listen To Click Color Icon==============================
 const listenToClickColorIcon = () => {
     const colorMenu = document.querySelector('.color__menu');
@@ -345,6 +367,7 @@ const listenToClickColorIcon = () => {
     parent.insertBefore(colorList, colorMenu.nextSibling);
     iconColor.addEventListener('click', () => {
         colorList.classList.toggle('show');
+        colorMenu.classList.toggle('removeBorder');
     })
 }
 
@@ -366,20 +389,13 @@ const listenToClickCategoryIcon = () => {
     parent.insertBefore(categoryList, categoryMenu.nextSibling);
     iconCategory.addEventListener('click', () => {
         categoryList.classList.toggle('show');
+        categoryMenu.classList.toggle('removeBorder');
     })
-}
-
-// listen for filter functions=================================
-const listenToClickFilterFn = () => {
-    listenToClickCollectionIcon();
-    listenToClickColorIcon();
-    listenToClickCategoryIcon();
 }
 
 // listen to more details button=======================
 const listenToMoreDetailsBtn = (detailBtn,eachItem) => {
     detailBtn.addEventListener('click', () => {
-        // shopSection.classList.add('hidden');
         main.innerHTML = '';
         main.append(productSection);
         const btnId = detailBtn.attributes[1].value;
@@ -388,7 +404,6 @@ const listenToMoreDetailsBtn = (detailBtn,eachItem) => {
         }
     })
 }
-
 
 // create product info /html==================
 const createProductInfo = (eachItem) => {
@@ -441,65 +456,52 @@ const createProductInfoText = (productInfoContainer,eachItem) => {
         <input type="number" name="num" id="num" class="num">
         <button class="add-btn" id="${eachItem.id}">Add to basket</button>
     `;
-    
     productInfoContainer.append(productInfoSize, productInfoColors,productInfoSelect);
     
     listenToAddToBasket();
     listenToShopBtnNavbar();
 }
 
-// listen to add to basket button===========================
+// listen to add to basket button============================
 const listenToAddToBasket = () => {
     const addBtn = document.querySelector('.add-btn');
     const numInput = document.querySelector('.num');
     
     addBtn.addEventListener('click', () => {
-        let itemIdArray = []
         const quantityValue = Number(numInput.value);
         const itemId = Number(addBtn.id);
-        itemIdArray.push(itemId);
-        showNumsOnBasket(quantityValue, itemIdArray);
+        showNumsOnBasket(quantityValue, itemId);
+        numInput.value = '';
     })
 }
 
 // show nums on basket===================================
-const showNumsOnBasket = (quantityValue, itemIdArray) => {
+const showNumsOnBasket = (quantityValue, itemId) => {
     const basketNum = document.querySelector('.basket-num');
     basketNum.classList.add('show');
     let val = Number(basketNum.innerText);
     basketNum.innerText = `${val += quantityValue}`;
-    listenToClickBasket(quantityValue, itemIdArray);
-}
-
-// shopping card state===================================
-let shopping_basketState = {
-    selectedItems: []
-};
-
-// update state=========================================
-const updateState = (newState) => {
-    shopping_basketState = {...shopping_basketState, ...newState};
-    console.log(shopping_basketState);
+    listenToClickBasket(quantityValue, itemId);
 }
 
 
 let basketArr =[];
-// listen to click basket===============================
-const listenToClickBasket = (quantityValue, itemIdArray) => {
+// listen to click shopping basket===============================
+const listenToClickBasket = (quantityValue, itemId) => {
     const navbarIcon = document.querySelector('.navbar__icon');
     navbarIcon.addEventListener('click', () => {
         fetch(`${productsURL}`)
             .then(res => res.json())
             .then(data => {
-                for(itemId of itemIdArray){
-                    data.map(el => {
-                        if(el.id === itemId){
-                            el.quantity += quantityValue
-                            el.total = Number((el.quantity * el.price).toFixed(2));
-                            basketArr.push(el);
-                        }
-                    });
-                }
+                data.map(el => {
+                    if(el.id === itemId){
+                        el.quantity += quantityValue
+                        el.total = Number((el.quantity * el.price).toFixed(2));
+                        shopping_basketState.selectedItems = [];
+                        basketArr.push(el);
+                    }
+                });
+                
                 let unique = ([...new Set(basketArr.map(JSON.stringify))]).map(JSON.parse);
                 let newState = {selectedItems: unique}
                 updateState(newState);
@@ -508,103 +510,14 @@ const listenToClickBasket = (quantityValue, itemIdArray) => {
     })
 }
 
-// listen to plus button=======================================
-const listenToPlusButton = (quantity, finalPrice) => {
-    const elementId = Number(quantity.parentElement.id);
-    const updatedArr = basketArr.map(el => {
-        if(el.id === elementId){
-            el.quantity += 1
-            el.total = Number((el.quantity * el.price).toFixed(2));
-            quantity.value = el.quantity;
-            finalPrice.innerText = `£${el.total}`;
-        }
-        return el;
-    });
-
-    let unique = ([...new Set(updatedArr.map(JSON.stringify))]).map(JSON.parse);
-    let newState = {selectedItems: unique}
-    updateState(newState);
-    
-    const cartItems = shopping_basketState.selectedItems;
-    const updateTotalArr = cartItems.map(el => Number(el.total));
-    const updatedTotal = updateTotalArr.reduce((acc,curr) => acc+curr);
-        
-    const updateQuantityArr = cartItems.map(el => el.quantity);
-    const updatedQuantity = updateQuantityArr.reduce((acc,curr) => acc+curr);
-    const totalQuantity = document.querySelector('.total-quantity');
-    const totalInput = document.querySelector('.total-input-item');
-    totalInput.innerText = `£${updatedTotal}`;
-    totalQuantity.innerText = updatedQuantity;
-}
-
-
-// listen to minus button==========================================
-const listenToMinusButton = (quantity, finalPrice) => {
-    const elementId = Number(quantity.parentElement.id);
-    const cartItems = shopping_basketState.selectedItems;
-    
-    const updatedArr = basketArr.map(el => {
-        if(el.id === elementId){
-            if(el.quantity > 1){
-                el.quantity -= 1
-                el.total = Number((el.quantity * el.price).toFixed(2));
-                quantity.value = el.quantity;
-                finalPrice.innerText = `£${el.total}`;
-            }
-            else if(el.quantity <= 1){
-                const idx = basketArr.indexOf(el);
-                basketArr.splice(idx,1);
-                finalPrice.parentElement.remove();
-            }
-        }
-        return el;
-    });
-
-    
-    
-    const me = (new Set(updatedArr)).size;
-    console.log(me);
-    if(me !== updatedArr.length){
-        let unique = ([...new Set(updatedArr.map(JSON.stringify))]).map(JSON.parse);
-        let newState = {selectedItems: unique};
-        updateState(newState);
-    }else{
-        let newState = {selectedItems: updateState};
-        updateState(newState);
-    }
-
-    if(updatedArr.length === 1){
-        const container = document.querySelector('.popup__content-container');
-        container.innerHTML = '';
-        const h2El = document.createElement('h2');
-        h2El.innerText = 'Hi, Your shopping basket is empty!';
-        basketArr = [];
-        container.append(h2El);
-    }
-    
-    
-    console.log(updatedArr);
-
-    // const cartItems = shopping_basketState.selectedItems;
-    const updateTotalArr = updatedArr.map(el => Number(el.total));
-    const updatedTotal = updateTotalArr.reduce((acc,curr) => acc+curr);
-        
-    const updateQuantityArr = updatedArr.map(el => el.quantity);
-    const updatedQuantity = updateQuantityArr.reduce((acc,curr) => acc+curr);
-    const totalQuantity = document.querySelector('.total-quantity');
-    const totalInput = document.querySelector('.total-input-item');
-    totalInput.innerText = `£${updatedTotal}`;
-    totalQuantity.innerText = updatedQuantity;
-}
-// empty popup==========================================
+// empty popup ==============================================
 const emptyPopUp =() => {
     const popup = document.querySelector('.popup');
     if(popup !== null){
         popup.remove();
     }
 }
-
-// create shoping basket==================================
+// create shoping basket======================================
 const createShoppingCart = () => {
     emptyPopUp();
     const popup = document.createElement('div');
@@ -622,11 +535,20 @@ const createShoppingCart = () => {
     const popupContentContainer = document.createElement('div');
     popupContentContainer.classList.add('popup__content-container');
     popupContainer.append(popupTop, popupContentContainer);
-    calcualteTotal(popupContentContainer);
     listenToCloseBasket();
+    calcualteTotal(popupContentContainer);
 }
 
-// calculate total and items==============================
+// listen to close basket=================================
+const listenToCloseBasket = ()=> {
+    const closeShoppingCart = document.querySelector('.popup__close');
+    const popUp = document.querySelector('.popup');
+    closeShoppingCart.addEventListener('click', () => {
+        popUp.classList.add('hidden');
+    })
+}
+
+// calculate total and items quantity ==============================
 const calcualteTotal = (popupContentContainer) => {
     const cartItems = shopping_basketState.selectedItems;
 
@@ -640,12 +562,14 @@ const calcualteTotal = (popupContentContainer) => {
 
     const QuantityArr = cartItems.map(el => el.quantity);
     const totalQuantity = QuantityArr.reduce((acc,curr) => acc+curr);
-    createPopupContents(popupContentContainer, totalItems,totalQuantity,cartItems);
+
+    createPopupContents(popupContentContainer, cartItems);
+    createPopupContentSecond(cartItems, popupContentContainer);
+    createPopupContentThird(popupContentContainer, totalQuantity, totalItems)
 }
 
-
 // create Popup Contents============================
-const createPopupContents = (popupContentContainer, totalItems,totalQuantity,cartItems) => {
+const createPopupContents = (popupContentContainer, cartItems) => {
     popupContentContainer.innerHTML = cartItems.map(el =>
         `
         <div class="popup__content">
@@ -659,7 +583,10 @@ const createPopupContents = (popupContentContainer, totalItems,totalQuantity,car
         </div>
         `
     ).join('');
-    
+}
+
+// create second part of popup content==============================
+const createPopupContentSecond = (cartItems, popupContentContainer) => {
     cartItems.map(el => {
         const popupContent = document.querySelector('.popup__content');
 
@@ -667,7 +594,6 @@ const createPopupContents = (popupContentContainer, totalItems,totalQuantity,car
         popupQuantity.classList.add('popup-quantity');
         popupQuantity.setAttribute('id', `${el.id}`);
         
-
         const popupMinus = document.createElement('span');
         popupMinus.classList.add('popup-minus');
         popupMinus.innerHTML = `<i class="fas fa-minus-circle"></i>`;
@@ -696,10 +622,12 @@ const createPopupContents = (popupContentContainer, totalItems,totalQuantity,car
         popupMinus.addEventListener('click', () => {
             listenToMinusButton(quantity, finalPrice);
         });
-        popupContentContainer.append(popupContent)
-    })
-    
+        popupContentContainer.append(popupContent);
+    });
+}
 
+// create third part of popupContent================================
+const createPopupContentThird = (popupContentContainer, totalQuantity, totalItems) => {
     const totalContainer = document.createElement('div');
     totalContainer.classList.add('total-container');
     totalContainer.innerHTML = `
@@ -715,30 +643,94 @@ const createPopupContents = (popupContentContainer, totalItems,totalQuantity,car
     const checkOutBtn = document.createElement('button');
     checkOutBtn.classList.add('checkout-btn');
     checkOutBtn.innerText = 'Continue To Checkout';
-
     popupContentContainer.append(totalContainer, checkOutBtn);
+}
+
+// listen to plus button=======================================
+const listenToPlusButton = (quantity, finalPrice) => {
+    const elementId = Number(quantity.parentElement.id);
+    const updatedArr = basketArr.map(el => {
+        if(el.id === elementId){
+            el.quantity += 1
+            el.total = Number((el.quantity * el.price).toFixed(2));
+            quantity.value = el.quantity;
+            finalPrice.innerText = `£${el.total}`;
+        }
+        return el;
+    });
+
+    let unique = ([...new Set(updatedArr.map(JSON.stringify))]).map(JSON.parse);
+    let newState = {selectedItems: unique}
+    updateState(newState);
     
+    const cartItems = shopping_basketState.selectedItems;
+    const updateTotalArr = cartItems.map(el => Number(el.total));
+    const updatedTotal = updateTotalArr.reduce((acc,curr) => acc+curr);
+        
+    const updateQuantityArr = cartItems.map(el => el.quantity);
+    const updatedQuantity = updateQuantityArr.reduce((acc,curr) => acc+curr);
+
+    const totalQuantity = document.querySelector('.total-quantity');
+    const totalInput = document.querySelector('.total-input-item');
+
+    totalInput.innerText = `£${updatedTotal}`;
+    totalQuantity.innerText = updatedQuantity;
 }
 
-// listen to close basket===============================
-const listenToCloseBasket = ()=> {
-    const closeShoppingCart = document.querySelector('.popup__close');
-    const popUp = document.querySelector('.popup');
-    closeShoppingCart.addEventListener('click', () => {
-        popUp.classList.add('hidden');
-    })
+// listen to minus button==========================================
+const listenToMinusButton = (quantity, finalPrice) => {
+    const elementId = Number(quantity.parentElement.id);
+    const basketNum = document.querySelector('.basket-num');
+    
+    basketArr.map(el => {
+        if(el.id === elementId){
+            if(el.quantity > 1){
+                el.quantity -= 1
+                el.total = Number((el.quantity * el.price).toFixed(2));
+                quantity.value = el.quantity;
+                finalPrice.innerText = `£${el.total}`;
+                let newState = {selectedItems: basketArr}
+                updateState(newState);
+                
+            }
+            else if(el.quantity <= 1){
+                const idx = basketArr.indexOf(el);
+                basketArr.splice(idx,1);
+                finalPrice.parentElement.remove();
+                let newState = {selectedItems: basketArr}
+                updateState(newState);
+            }
+        }
+        return el;
+    });
+
+    let cartItems = shopping_basketState.selectedItems;
+    if(cartItems.length === 0){
+        const container = document.querySelector('.popup__content-container');
+        container.innerHTML = '';
+        basketArr = [];
+        basketNum.innerText = 0;
+        basketNum.classList.remove('show');
+        const h2El = document.createElement('h2');
+        h2El.innerText = 'Hi, Your shopping basket is empty!';
+        container.append(h2El);
+        let newState = {selectedItems: basketArr}
+        updateState(newState);
+    }
+    
+    const updateTotalArr = cartItems.map(el => Number(el.total));
+    const updatedTotal = updateTotalArr.reduce((acc,curr) => acc+curr);
+
+    const updateQuantityArr = cartItems.map(el => el.quantity);
+    const updatedQuantity = updateQuantityArr.reduce((acc,curr) => acc+curr);
+
+    if(updatedQuantity >= 1){
+        basketNum.innerText = updatedQuantity;
+    }
+    
+    const totalQuantity = document.querySelector('.total-quantity');
+    const totalInput = document.querySelector('.total-input-item');
+    totalInput.innerText = `£${updatedTotal}`;
+    totalQuantity.innerText = updatedQuantity;
 }
 
-
-const navbarLogo = document.querySelector('.navbar__logo');
-const home = document.querySelector('.home-page');
-
-navbarLogo.addEventListener('click',() =>{
-    main.innerHTML = '';
-    main.append(homeSection);
-});
-
-home.addEventListener('click',() =>{
-    main.innerHTML = '';
-    main.append(homeSection);
-})

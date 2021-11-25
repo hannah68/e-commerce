@@ -15,7 +15,6 @@ html{
 }
 
 body{
-    /* overflow: hidden; */
     position: relative;
     height: 100%;
 }
@@ -38,7 +37,6 @@ body{
 .navbar__lists{
     list-style: none;
     display: flex;
-    /* padding: 1rem 30rem; */
 }
 
 .navbar__lists--item{
@@ -53,6 +51,7 @@ body{
 .navbar__logo,
 .navbar__icon{
     padding: 1rem 0;
+    cursor: pointer;
 }
 .navbar__icon{
     position: relative;
@@ -79,9 +78,7 @@ body{
 
 /* main====================== */
 main{
-    /* margin-top: 7rem; */
     position: relative;
-    /* height: 100vh; */
     min-height: calc(100vh - 8rem);
     padding-bottom: 10rem;
     overflow: hidden;
@@ -164,10 +161,6 @@ main{
     margin: 0 auto;
 }
 
-.features-item{
-    
-}
-
 .features-item img{
     width: 25rem;
     height: 25rem;
@@ -196,13 +189,9 @@ main{
 /* footer */
 /* navbar styling */
 .footer-container{
-    /* height: 8rem; */
     height: 8rem;
     width: 100%;
     background-color: #DDD8D5;
-    /* position: absolute;
-    bottom: 0;
-    left: 0; */
     width: 100%;
 } 
 
@@ -218,7 +207,6 @@ main{
 .footer__lists{
     list-style: none;
     display: flex;
-    /* padding: 1rem 30rem; */
 }
 
 .footer__lists--item{
@@ -265,8 +253,6 @@ main{
     justify-content: flex-end;
     gap: 7rem;
     font-size: 2rem;
-    /* width: 60rem;
-    margin: 0 20rem 0 90rem; */
 }
 
 .search__input{
@@ -299,6 +285,7 @@ main{
 .category__list.show{
     display: block;
 }
+
 
 .collection__list{
     list-style: none;
@@ -344,7 +331,19 @@ main{
 .price__menu{
     display: flex;
     justify-content: space-between;
-    padding-bottom: 2rem;
+    padding: 2rem 0;
+}
+
+.collection__menu.removeBorder,
+.color__menu.removeBorder,
+.category__menu.removeBorder{
+    border-bottom: none;
+}
+
+.collection__menu,
+.color__menu,
+.category__menu{
+    border-bottom: 1px solid #000;
 }
 
 .price__list{
@@ -359,6 +358,11 @@ main{
     bottom: 0;
     justify-content: space-evenly;
 }
+
+/* .range-container input[type=range]::-moz-range-progress {
+    background-color: green;
+    height: 1em;
+} */
 
 .price-text{
     width: 100%;
@@ -552,7 +556,6 @@ main{
 }
 
 .popup.hidden{
-    /* display: none; */
     opacity: 0;
     visibility: hidden;
     transition: all .3s;
@@ -633,6 +636,7 @@ main{
 .quantity{
     border: none;
     outline: none;
+    background-color: transparent;
     width: 6rem;
     text-align: center;
     font-size: 2rem;
