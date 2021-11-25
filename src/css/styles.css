@@ -412,7 +412,9 @@ main{
 }
 
 .product__img{
-    width: 100%;
+    /* width: 100%; */
+    width: 318px;
+    height: 220px;
     margin-bottom: 1rem;
 }
 
@@ -425,7 +427,9 @@ main{
     justify-content: space-between;
     margin-bottom: 1.5rem;
 }
-
+.stars span{
+    color:  #FF9529;
+}
 .product__btn{
     border: none;
     outline: none;
