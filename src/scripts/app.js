@@ -9,7 +9,23 @@ main.append(homeSection);
 
 // shopping card state===================================
 let shopping_basketState = {
-    selectedItems: []
+    selectedItems: [],
+    filter:{
+        collection: [],
+        color: {
+            'Pink': false,
+            'Blue': false,
+            'White': false,
+            'Green': false,
+            'Beige': false,
+            'Black': false,
+            'Brown': false,
+            'Yellow': false,
+            'Grey': false,
+            'Lavender': false
+        },
+        category: []
+    }
 };
 
 // update state=========================================
@@ -41,7 +57,6 @@ const filterItems = {
 // server=========================================
 const serverURL = 'http://localhost:3000/';
 const productsURL = serverURL + 'products/';
-const shopUrl = serverURL + 'shops/'
 
 // create hero section============================
 const heroSectionFn = () => {
@@ -263,6 +278,15 @@ const filterPriceSection = (form) => {
     searchFilterBtn.setAttribute('type', 'submit');
     searchFilterBtn.setAttribute('value', 'search');
     form.append(priceMenu,priceList);
+    filterSearchFom(form);
+}
+
+const filterSearchFom = (form) => {
+    const filterButton = document.createElement('button');
+    filterButton.innerText = 'Search';
+    filterButton.setAttribute('type', 'submit');
+    filterButton.classList.add('search-btn');
+    form.append(filterButton);
     listenToClickFilterFn();
 }
 
@@ -275,10 +299,10 @@ const createProductSection = (container) => {
 }
 
 // create random product for product section=================
-const randomFnForProducts = () => {
+const randomFnForProducts = (num) => {
     let numIndex = []
     while(numIndex.length < 6){
-        const randomNum = Math.floor(Math.random() * 42) + 1;
+        const randomNum = Math.floor(Math.random() * num) + 1;
         if(numIndex.indexOf(randomNum) === -1) numIndex.push(randomNum);
     }
     return numIndex;
@@ -289,7 +313,7 @@ const fetchProducts = async (productContainer) => {
     try{
         const res = await fetch(`${productsURL}`);
         const data = await res.json();
-        const productArr = randomFnForProducts();
+        const productArr = randomFnForProducts(42);
         for(let i=0; i<productArr.length; i++){
             const item = productArr[i];
             createProductItem(productContainer, data, item)
@@ -324,6 +348,7 @@ const createProductItem = (productContainer, data, item) => {
     const detailBtn = document.querySelector('.product__btn');
     listenToMoreDetailsBtn(detailBtn,eachItem);
 }
+    
 
 // listen for filter functions=================================
 const listenToClickFilterFn = () => {
@@ -347,6 +372,7 @@ const listenToClickCollectionIcon = () => {
         collectionList.classList.toggle('show');
         collectionMenu.classList.toggle('removeBorder');
     });
+    fetchFilterProducts()
 }
 
 // listen To Click Color Icon==============================
@@ -359,8 +385,8 @@ const listenToClickColorIcon = () => {
     colorList.innerHTML = filterItems.color.map(item => {
         return `
             <div class="color-group">
-                <input type="checkbox" id="color-${item}">
-                <label for="color-${item}">${item}</label>
+                <input type="checkbox" id="${item}">
+                <label for="${item}">${item}</label>
             </div>
         `
     }).join('');
@@ -734,3 +760,101 @@ const listenToMinusButton = (quantity, finalPrice) => {
     totalQuantity.innerText = updatedQuantity;
 }
 
+// Filter section**************************************************
+
+// listen to click collection======================================
+const fetchFilterProducts = async () => {
+    const res = await fetch(`${productsURL}`);
+    const data = await res.json()
+    
+    filterCollectionClick(data);
+    filterColorClick(data);
+}
+
+// filter collection 1==============================================
+const filterCollectionClick = (data) => {
+    const liElements = document.querySelectorAll('.collection__list li');
+    liElements.forEach(li => {
+        li.addEventListener('click', () => {
+            const text = li.textContent;
+            const filteredArr = data.filter(el => el.collection === text);
+            let newState = {filter: {collection: filteredArr}};
+            updateState(newState);
+            let arr = shopping_basketState.filter.collection;
+            updateProductContainerWithCollection(arr);
+        })
+    })
+}
+
+// filter collection 2==============================================
+const updateProductContainerWithCollection = (filteredArr) => {
+    const productContainer = document.querySelector('.product-container');
+    const productArr = randomFnForProducts(filteredArr.length);
+    productContainer.innerHTML = '';
+    for(let i=0; i< productArr.length; i++){
+        const itemIdx = productArr[i];
+        createProductItem(productContainer, filteredArr, itemIdx)
+    }
+}
+
+// filter color 1================================================
+const filterColorClick = (data) => {
+    const colorGroup = document.querySelectorAll('.color-group');
+    colorGroup.forEach(group => {
+        const inputEl = group.querySelectorAll('input');
+        inputEl.forEach(input => {
+            input.addEventListener('change', (e) => {
+                if(input.checked){
+                    const inputId = input.id;
+                    shopping_basketState.filter.color[inputId] = true;
+                    
+                    console.log(shopping_basketState);
+                    const filteredArr = data.filter(el => {
+                        if(shopping_basketState.filter.color[inputId]=== true){
+                            return el.color === inputId
+                        }
+                    });
+                    
+                    // let newState = {filter: {color: {}}};
+                    // updateState(newState);
+                    
+                    updateProductContainerWithColor(filteredArr);
+                }
+                
+            })
+        })
+    })
+}
+
+const removeUncheckedColorValue = (input) => {
+    const text = input.id;
+    let stateColorArr = shopping_basketState.filter.color;
+    const findUncheckedValue = stateColorArr.filter(el => el.color === text);
+    console.log(findUncheckedValue);
+    const arrayOfIndex = findUncheckedValue.map(item => stateColorArr.indexOf(item));
+    stateColorArr = stateColorArr.filter(function(value, index) {
+        return arrayOfIndex.indexOf(index) === -1;
+    });
+    let newState = {breweries: stateColorArr};
+    updateState(newState);
+}
+
+// filter color 2================================================
+const updateProductContainerWithColor = (filteredArr) => {
+    const productContainer = document.querySelector('.product-container');
+    if(filteredArr.length <= 6){
+        productContainer.innerHTML = '';
+        const productArr = filteredArr.map(el => filteredArr.indexOf(el));
+        for(let i=0; i< productArr.length; i++){
+            const itemIdx = productArr[i];
+            createProductItem(productContainer, filteredArr, itemIdx)
+        }
+    }else{
+        productContainer.innerHTML = '';
+        const productArr = randomFnForProducts(filteredArr.length);
+        for(let i=0; i< productArr.length; i++){
+            const itemIdx = productArr[i];
+            createProductItem(productContainer, filteredArr, itemIdx)
+        }
+    }
+}
