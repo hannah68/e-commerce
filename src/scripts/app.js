@@ -11,7 +11,7 @@ main.append(homeSection);
 let shopping_basketState = {
     selectedItems: [],
     filter:{
-        collection: [],
+        collection: {'Autumn-Winter': false, 'Spring-Summer': false},
         color: {
             'Pink': false,
             'Blue': false,
@@ -24,7 +24,8 @@ let shopping_basketState = {
             'Grey': false,
             'Lavender': false
         },
-        category: []
+        category: {'Chair': false, 'Table': false, 'Bed': false, 'Lamp': false, 'Sofa': false},
+        price: []
     }
 };
 
@@ -266,11 +267,11 @@ const filterPriceSection = (form) => {
     priceText.innerHTML = `
         <div class="min-text">
             <span>£</span>
-            <input type="number" value="0" min="0" max="1000">
+            <input type="number" value="0" min="0" max="1000" id="min-num">
         </div>
         <div class="max-text">
             <span>£</span>
-            <input type="number" value="1000" min="0" max="1000">
+            <input type="number" value="1000" min="0" max="1000" id="max-num">
         </div>
     `
     const searchFilterBtn = document.createElement('input');
@@ -407,8 +408,8 @@ const listenToClickCategoryIcon = () => {
     categoryList.innerHTML = filterItems.category.map(item => {
         return `
             <div class="category-group">
-                <input type="checkbox" id="category-${item}">
-                <label for="category-${item}">${item}</label>
+                <input type="checkbox" id="${item}">
+                <label for="${item}">${item}</label>
             </div>
         `
     }).join('');
@@ -769,6 +770,8 @@ const fetchFilterProducts = async () => {
     
     filterCollectionClick(data);
     filterColorClick(data);
+    filterCategoryClick(data);
+    filterPriceClick(data);
 }
 
 // filter collection 1==============================================
@@ -777,24 +780,9 @@ const filterCollectionClick = (data) => {
     liElements.forEach(li => {
         li.addEventListener('click', () => {
             const text = li.textContent;
-            const filteredArr = data.filter(el => el.collection === text);
-            let newState = {filter: {collection: filteredArr}};
-            updateState(newState);
-            let arr = shopping_basketState.filter.collection;
-            updateProductContainerWithCollection(arr);
+            shopping_basketState.filter.collection[text] = true;
         })
     })
-}
-
-// filter collection 2==============================================
-const updateProductContainerWithCollection = (filteredArr) => {
-    const productContainer = document.querySelector('.product-container');
-    const productArr = randomFnForProducts(filteredArr.length);
-    productContainer.innerHTML = '';
-    for(let i=0; i< productArr.length; i++){
-        const itemIdx = productArr[i];
-        createProductItem(productContainer, filteredArr, itemIdx)
-    }
 }
 
 // filter color 1================================================
@@ -807,54 +795,107 @@ const filterColorClick = (data) => {
                 if(input.checked){
                     const inputId = input.id;
                     shopping_basketState.filter.color[inputId] = true;
-                    
+                    // updateProductContainerWithColor(filteredArr);
                     console.log(shopping_basketState);
-                    const filteredArr = data.filter(el => {
-                        if(shopping_basketState.filter.color[inputId]=== true){
-                            return el.color === inputId
-                        }
-                    });
-                    
-                    // let newState = {filter: {color: {}}};
-                    // updateState(newState);
-                    
-                    updateProductContainerWithColor(filteredArr);
                 }
-                
             })
         })
     })
 }
 
-const removeUncheckedColorValue = (input) => {
-    const text = input.id;
-    let stateColorArr = shopping_basketState.filter.color;
-    const findUncheckedValue = stateColorArr.filter(el => el.color === text);
-    console.log(findUncheckedValue);
-    const arrayOfIndex = findUncheckedValue.map(item => stateColorArr.indexOf(item));
-    stateColorArr = stateColorArr.filter(function(value, index) {
-        return arrayOfIndex.indexOf(index) === -1;
-    });
-    let newState = {breweries: stateColorArr};
-    updateState(newState);
+// filter category 1================================================
+const filterCategoryClick = (data) => {
+    const categoryGroup = document.querySelectorAll('.category-group');
+    categoryGroup.forEach(group => {
+        const inputEl = group.querySelectorAll('input');
+        inputEl.forEach(input => {
+            input.addEventListener('change', (e) => {
+                if(input.checked){
+                    const inputId = input.id;
+                    shopping_basketState.filter.category[inputId] = true;
+                    // updateProductContainerWithColor(filteredArr);
+                    console.log(shopping_basketState);
+                }
+            })
+        })
+    })
 }
 
-// filter color 2================================================
-const updateProductContainerWithColor = (filteredArr) => {
-    const productContainer = document.querySelector('.product-container');
-    if(filteredArr.length <= 6){
-        productContainer.innerHTML = '';
-        const productArr = filteredArr.map(el => filteredArr.indexOf(el));
-        for(let i=0; i< productArr.length; i++){
-            const itemIdx = productArr[i];
-            createProductItem(productContainer, filteredArr, itemIdx)
-        }
-    }else{
-        productContainer.innerHTML = '';
-        const productArr = randomFnForProducts(filteredArr.length);
-        for(let i=0; i< productArr.length; i++){
-            const itemIdx = productArr[i];
-            createProductItem(productContainer, filteredArr, itemIdx)
-        }
+// filter price 1================================================
+const filterPriceClick = (data) => {
+    const maxPrice = document.querySelector('#max-price');
+    const maxNum = document.querySelector('#max-num');
+    let timer;
+    maxNum.addEventListener('input', () => {
+        const value = maxNum.value
+        changePriceVal(value);
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            shopping_basketState.filter.price.push(value);
+            console.log(shopping_basketState);
+        },value);
+    })
+    function changePriceVal(value){
+        maxPrice.value = value;
+    }
+    
+    maxPrice.addEventListener('input', () => {
+        const value = maxPrice.value;
+        changeSliderVal(value);
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            shopping_basketState.filter.price.push(value);
+            console.log(shopping_basketState);
+        },value);
+    })
+
+    function changeSliderVal(value){
+        maxNum.value = value;
     }
 }
+
+// filter collection 2==============================================
+// const updateProductContainerWithCollection = (filteredArr) => {
+//     const productContainer = document.querySelector('.product-container');
+//     const productArr = randomFnForProducts(filteredArr.length);
+//     productContainer.innerHTML = '';
+//     for(let i=0; i< productArr.length; i++){
+//         const itemIdx = productArr[i];
+//         createProductItem(productContainer, filteredArr, itemIdx)
+//     }
+// }
+
+
+
+// const removeUncheckedColorValue = (input) => {
+//     const text = input.id;
+//     let stateColorArr = shopping_basketState.filter.color;
+//     const findUncheckedValue = stateColorArr.filter(el => el.color === text);
+//     console.log(findUncheckedValue);
+//     const arrayOfIndex = findUncheckedValue.map(item => stateColorArr.indexOf(item));
+//     stateColorArr = stateColorArr.filter(function(value, index) {
+//         return arrayOfIndex.indexOf(index) === -1;
+//     });
+//     let newState = {breweries: stateColorArr};
+//     updateState(newState);
+// }
+
+// filter color 2================================================
+// const updateProductContainerWithColor = (filteredArr) => {
+//     const productContainer = document.querySelector('.product-container');
+//     if(filteredArr.length <= 6){
+//         productContainer.innerHTML = '';
+//         const productArr = filteredArr.map(el => filteredArr.indexOf(el));
+//         for(let i=0; i< productArr.length; i++){
+//             const itemIdx = productArr[i];
+//             createProductItem(productContainer, filteredArr, itemIdx)
+//         }
+//     }else{
+//         productContainer.innerHTML = '';
+//         const productArr = randomFnForProducts(filteredArr.length);
+//         for(let i=0; i< productArr.length; i++){
+//             const itemIdx = productArr[i];
+//             createProductItem(productContainer, filteredArr, itemIdx)
+//         }
+//     }
+// }
