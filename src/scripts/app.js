@@ -224,11 +224,17 @@ const filterSectionFn = () => {
     const filterContainer = document.createElement('div');
     filterContainer.classList.add('filter-container');
     container.append(filterContainer);
+    const divContainer = document.createElement('div');
+    divContainer.classList.add('clear-container');
     const h2El = document.createElement('h2');
     h2El.innerText = 'Filtered by';
+    const clearBtn = document.createElement('button');
+    clearBtn.innerText = 'Clear All';
+    clearBtn.classList.add('clear-btn');
+    divContainer.append(h2El, clearBtn);
     const form = document.createElement('form');
     form.classList.add('filter__collection');
-    filterContainer.append(h2El,form);
+    filterContainer.append(divContainer, form);
     filteredFormSectionFn(form);
     filterPriceSection(form);
     createProductSection(container);
@@ -329,6 +335,7 @@ const fetchProducts = async (productContainer) => {
 const createProductItem = (productContainer, data, item) => {
     const eachItem = data.find(el => data.indexOf(el) === item);
     const product = document.createElement('div');
+    console.log('me');
     product.classList.add('product');
     product.innerHTML = `
         <img class="product__img" src="${eachItem.img}" alt="${eachItem.title}">
@@ -423,11 +430,13 @@ const listenToClickCategoryIcon = () => {
 // listen to more details button=======================
 const listenToMoreDetailsBtn = (detailBtn,eachItem) => {
     detailBtn.addEventListener('click', () => {
+        console.log('details');
         main.innerHTML = '';
         main.append(productSection);
         const btnId = detailBtn.attributes[1].value;
         if(eachItem.id === Number(btnId)){
             createProductInfo(eachItem);
+            console.log('id');
         }
     })
 }
@@ -772,6 +781,7 @@ const fetchFilterProducts = async () => {
     filterColorClick(data);
     filterCategoryClick(data);
     filterPriceClick(data);
+    
 }
 
 // filter collection 1==============================================
@@ -781,6 +791,7 @@ const filterCollectionClick = (data) => {
         li.addEventListener('click', () => {
             const text = li.textContent;
             shopping_basketState.filter.collection[text] = true;
+            renderFilters(data)
         })
     })
 }
@@ -795,8 +806,7 @@ const filterColorClick = (data) => {
                 if(input.checked){
                     const inputId = input.id;
                     shopping_basketState.filter.color[inputId] = true;
-                    // updateProductContainerWithColor(filteredArr);
-                    console.log(shopping_basketState);
+                    renderFilters(data)
                 }
             })
         })
@@ -813,8 +823,7 @@ const filterCategoryClick = (data) => {
                 if(input.checked){
                     const inputId = input.id;
                     shopping_basketState.filter.category[inputId] = true;
-                    // updateProductContainerWithColor(filteredArr);
-                    console.log(shopping_basketState);
+                    renderFilters(data)
                 }
             })
         })
@@ -832,7 +841,7 @@ const filterPriceClick = (data) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
             shopping_basketState.filter.price.push(value);
-            console.log(shopping_basketState);
+            renderFilters(data)
         },value);
     })
     function changePriceVal(value){
@@ -845,7 +854,7 @@ const filterPriceClick = (data) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
             shopping_basketState.filter.price.push(value);
-            console.log(shopping_basketState);
+            renderFilters(data)
         },value);
     })
 
@@ -854,48 +863,84 @@ const filterPriceClick = (data) => {
     }
 }
 
-// filter collection 2==============================================
-// const updateProductContainerWithCollection = (filteredArr) => {
-//     const productContainer = document.querySelector('.product-container');
-//     const productArr = randomFnForProducts(filteredArr.length);
-//     productContainer.innerHTML = '';
-//     for(let i=0; i< productArr.length; i++){
-//         const itemIdx = productArr[i];
-//         createProductItem(productContainer, filteredArr, itemIdx)
-//     }
-// }
+// render filters=========================================================
+const renderFilters = (data) => {
+    const form = document.querySelector('.filter__collection');
+    const state = shopping_basketState.filter;
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let newArr = [];
+        data.filter(el => {
+            const category = state.category[el.category];
+            const collection = state.collection[el.collection];
+            const color = state.color[el.color];
+            const price = Number(state.price[0]);
+            if(category === true && collection === true && color === true && el.price <= price){
+                newArr.push(el)
+            }
+        });
+        const productContainer = document.querySelector('.product-container');
+        productContainer.innerHTML = newArr.map(el => 
+            `
+            <div class="product">
+                <img class="product__img" src="${el.img}" alt="${el.title}">
+                <p class="product__name">${el.title}</p>
+                <div class="product__stars">
+                    <div class="stars">
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="fas fa-star"></i></span>
+                        <span><i class="${randomFn()}"></i></span>
+                    </div>
+                    <p class="product__price">£${el.price}</p>
+                </div>
+                <button class="product__btn" dataId="${el.id}">More Details</button>
+            </div>
+            `
+        ).join('');
+        const detailBtn = document.querySelector('.product__btn');
+        // what is each item????
+        // listenToMoreDetailsBtn(detailBtn,eachItem);
+        renderClearFilters(newArr,data, productContainer);
+    })
+    
+}
 
-
-
-// const removeUncheckedColorValue = (input) => {
-//     const text = input.id;
-//     let stateColorArr = shopping_basketState.filter.color;
-//     const findUncheckedValue = stateColorArr.filter(el => el.color === text);
-//     console.log(findUncheckedValue);
-//     const arrayOfIndex = findUncheckedValue.map(item => stateColorArr.indexOf(item));
-//     stateColorArr = stateColorArr.filter(function(value, index) {
-//         return arrayOfIndex.indexOf(index) === -1;
-//     });
-//     let newState = {breweries: stateColorArr};
-//     updateState(newState);
-// }
-
-// filter color 2================================================
-// const updateProductContainerWithColor = (filteredArr) => {
-//     const productContainer = document.querySelector('.product-container');
-//     if(filteredArr.length <= 6){
-//         productContainer.innerHTML = '';
-//         const productArr = filteredArr.map(el => filteredArr.indexOf(el));
-//         for(let i=0; i< productArr.length; i++){
-//             const itemIdx = productArr[i];
-//             createProductItem(productContainer, filteredArr, itemIdx)
-//         }
-//     }else{
-//         productContainer.innerHTML = '';
-//         const productArr = randomFnForProducts(filteredArr.length);
-//         for(let i=0; i< productArr.length; i++){
-//             const itemIdx = productArr[i];
-//             createProductItem(productContainer, filteredArr, itemIdx)
-//         }
-//     }
-// }
+// render clear filters===============================================
+const renderClearFilters = (newArr, data, productContainer) => {
+    const clearBtn = document.querySelector('.clear-btn');
+    const state = shopping_basketState.filter;
+    clearBtn.addEventListener('click', () => {
+        newArr.forEach(el => {
+            state.category[el.category] = false;
+            state.collection[el.collection] = false;
+            state.color[el.color] = false;
+            state.price = [];
+        });
+        const colorGroup = document.querySelectorAll('.color-group');
+        colorGroup.forEach(group => {
+            const inputEl = group.querySelectorAll('input');
+            inputEl.forEach(input => {
+                input.checked = false;
+            })
+        });
+        const categoryGroup = document.querySelectorAll('.category-group');
+        categoryGroup.forEach(group => {
+        const inputEl = group.querySelectorAll('input');
+            inputEl.forEach(input => {
+                input.checked = false;
+            })
+        })
+        const maxPrice = document.querySelector('#max-price');
+        const maxNum = document.querySelector('#max-num');
+        maxNum.value = 1000;
+        maxPrice.value = 1000;
+        const productArr = randomFnForProducts(42);
+        for(let i=0; i<productArr.length; i++){
+            const item = productArr[i];
+            createProductItem(productContainer, data, item)
+        }
+    });
+}

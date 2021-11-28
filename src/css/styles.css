@@ -286,7 +286,19 @@ main{
     display: block;
 }
 
-
+.clear-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.clear-btn {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    text-decoration: underline;
+    margin-bottom: 2rem;
+}
 .collection__list{
     list-style: none;
     margin-bottom: 1rem;
