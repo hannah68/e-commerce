@@ -206,7 +206,7 @@ const SearchSectionFn = () => {
     const searchInput = document.createElement('input');
     searchInput.classList.add('search__input');
     searchInput.setAttribute('type', 'text');
-    searchInput.setAttribute('placeholder', 'search');
+    searchInput.setAttribute('placeholder', 'search by a category...');
     const searchSort = document.createElement('div');
     searchSort.classList.add('search__sort');
     search.append(searchInput,searchSort);
@@ -335,7 +335,6 @@ const fetchProducts = async (productContainer) => {
 const createProductItem = (productContainer, data, item) => {
     const eachItem = data.find(el => data.indexOf(el) === item);
     const product = document.createElement('div');
-    console.log('me');
     product.classList.add('product');
     product.innerHTML = `
         <img class="product__img" src="${eachItem.img}" alt="${eachItem.title}">
@@ -430,13 +429,11 @@ const listenToClickCategoryIcon = () => {
 // listen to more details button=======================
 const listenToMoreDetailsBtn = (detailBtn,eachItem) => {
     detailBtn.addEventListener('click', () => {
-        console.log('details');
         main.innerHTML = '';
         main.append(productSection);
         const btnId = detailBtn.attributes[1].value;
         if(eachItem.id === Number(btnId)){
             createProductInfo(eachItem);
-            console.log('id');
         }
     })
 }
@@ -781,6 +778,7 @@ const fetchFilterProducts = async () => {
     filterColorClick(data);
     filterCategoryClick(data);
     filterPriceClick(data);
+    searchProduct(data);
     
 }
 
@@ -900,12 +898,12 @@ const renderFilters = (data) => {
             </div>
             `
         ).join('');
-        const detailBtn = document.querySelector('.product__btn');
-        // what is each item????
-        // listenToMoreDetailsBtn(detailBtn,eachItem);
+        newArr.map(el => {
+            const detailBtn = document.querySelector('.product__btn');
+            listenToMoreDetailsBtn(detailBtn,el);
+        })
         renderClearFilters(newArr,data, productContainer);
     })
-    
 }
 
 // render clear filters===============================================
@@ -943,4 +941,22 @@ const renderClearFilters = (newArr, data, productContainer) => {
             createProductItem(productContainer, data, item)
         }
     });
+}
+
+// search product====================================================
+const searchProduct = (data) => {
+    const searchInput = document.querySelector('.search__input');
+    searchInput.addEventListener('change', () => {
+        const capitalize = searchInput.value.charAt(0).toUpperCase();
+        const inputValue = capitalize + searchInput.value.slice(1);
+        const filteredArr = data.filter(el => el.category === inputValue);
+        const productArr = randomFnForProducts(filteredArr.length);
+        const productContainer = document.querySelector('.product-container');
+        productContainer.innerHTML = '';
+        searchInput.value = '';
+        for(let i=0; i<productArr.length; i++){
+            const item = productArr[i];
+            createProductItem(productContainer, filteredArr, item);
+        }
+    })
 }
