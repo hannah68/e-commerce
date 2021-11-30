@@ -257,9 +257,10 @@ main{
 
 .search__input{
     width: 70%;
+    border: none;
     outline: none;
     padding: 1rem;
-    border-radius: 5px;
+    border-bottom: 1px solid #000;
 }
 
 .search__sort{
@@ -267,13 +268,44 @@ main{
     
 }
 
+.sort-container{
+    list-style: none;
+    text-align: center;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 3.6rem;
+    right: 0px;
+    width: 100%;
+    padding: 1rem;
+    background-color: #DDD8D5;
+    display: none;
+}
+
+.sort-container.show{
+    display: block;
+}
+
+.sort-container li {
+    padding: 5px 0;
+    cursor: pointer;
+}
 .search__sort--btn{
     width: 100%;
     outline: none;
     padding: 1rem;
-    border-radius: 5px;
+    border: none;
+    border-bottom: 1px solid #000;
+    background-color: transparent;
+    position: relative;
 }
 
+.dropdown-icon{
+    cursor: pointer;
+}
+.sort-btn-container{
+    display: flex;
+    justify-content: space-between;
+}
 .collection__list,
 .color__list,
 .category__list{

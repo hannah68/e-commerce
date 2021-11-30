@@ -212,8 +212,36 @@ const SearchSectionFn = () => {
     search.append(searchInput,searchSort);
     const sortBtn = document.createElement('button');
     sortBtn.classList.add('search__sort--btn');
-    sortBtn.innerText = 'Sort By';
+    const sortBtnContainer = document.createElement('div');
+    sortBtnContainer.classList.add('sort-btn-container')
+    const btnText = document.createElement('span');
+    btnText.innerText = 'Sort By';
+    const btnIcon = document.createElement('span');
+    btnIcon.innerHTML = `<i class="fas fa-angle-down"></i>`;
+    btnIcon.classList.add('dropdown-icon')
+    sortBtn.append(sortBtnContainer);
+    const sortContainer = document.createElement('ul');
+    sortContainer.classList.add('sort-container');
+    sortBtnContainer.append(btnText, btnIcon);
+    sortBtn.append(sortContainer);
+    const sortEl1 = document.createElement('li');
+    sortEl1.innerText = 'Lowest Price';
+    sortEl1.classList.add('lowest');
+    const sortEl2 = document.createElement('li');
+    sortEl2.innerText = 'Highest Price';
+    sortEl2.classList.add('highest');
+    sortContainer.append(sortEl1, sortEl2);
     searchSort.append(sortBtn);
+    listenToDropdownSort();
+}
+
+// listen to sort dropdown menu=============================
+const listenToDropdownSort = () => {
+    const dropdownIcon = document.querySelector('.dropdown-icon');
+    const sortContainer = document.querySelector('.sort-container');
+    dropdownIcon.addEventListener('click', () => {
+        sortContainer.classList.toggle('show');
+    })
 }
 
 // create filter section============================
@@ -779,6 +807,7 @@ const fetchFilterProducts = async () => {
     filterCategoryClick(data);
     filterPriceClick(data);
     searchProduct(data);
+
     
 }
 
@@ -868,18 +897,18 @@ const renderFilters = (data) => {
     
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        let newArr = [];
+        let filterStateArr = [];
         data.filter(el => {
             const category = state.category[el.category];
             const collection = state.collection[el.collection];
             const color = state.color[el.color];
             const price = Number(state.price[0]);
             if(category === true && collection === true && color === true && el.price <= price){
-                newArr.push(el)
+                filterStateArr.push(el)
             }
         });
         const productContainer = document.querySelector('.product-container');
-        productContainer.innerHTML = newArr.map(el => 
+        productContainer.innerHTML = filterStateArr.map(el => 
             `
             <div class="product">
                 <img class="product__img" src="${el.img}" alt="${el.title}">
@@ -898,20 +927,21 @@ const renderFilters = (data) => {
             </div>
             `
         ).join('');
-        newArr.map(el => {
+        filterStateArr.map(el => {
             const detailBtn = document.querySelector('.product__btn');
             listenToMoreDetailsBtn(detailBtn,el);
         })
-        renderClearFilters(newArr,data, productContainer);
+        renderClearFilters(filterStateArr,data, productContainer);
+        renderSort(filterStateArr,data);
     })
 }
 
 // render clear filters===============================================
-const renderClearFilters = (newArr, data, productContainer) => {
+const renderClearFilters = (filterStateArr, data, productContainer) => {
     const clearBtn = document.querySelector('.clear-btn');
     const state = shopping_basketState.filter;
     clearBtn.addEventListener('click', () => {
-        newArr.forEach(el => {
+        filterStateArr.forEach(el => {
             state.category[el.category] = false;
             state.collection[el.collection] = false;
             state.color[el.color] = false;
@@ -957,6 +987,45 @@ const searchProduct = (data) => {
         for(let i=0; i<productArr.length; i++){
             const item = productArr[i];
             createProductItem(productContainer, filteredArr, item);
+        }
+    })
+}
+
+
+const renderSort = (filterStateArr,data) => {
+    if(filterStateArr.length !== null){
+        sortByLowestPrice(filterStateArr);
+        sortByHighestPrice(filterStateArr);
+    }else{
+        sortByLowestPrice(data);
+        sortByHighestPrice(data);
+    }
+}
+
+const sortByLowestPrice = (filterStateArr) => {
+    const lowest = document.querySelector('.lowest');
+    lowest.addEventListener('click', () => {
+        const productContainer = document.querySelector('.product-container');
+        productContainer.innerHTML = '';
+        const lowestPriceArr = filterStateArr.sort((a,b) => a.price - b.price);
+        const productArr = randomFnForProducts(lowestPriceArr.length);
+        for(let i=0; i<productArr.length; i++){
+            const item = productArr[i];
+            createProductItem(productContainer, lowestPriceArr, item);
+        }
+    })
+}
+
+const sortByHighestPrice = (filterStateArr) => {
+    const highest = document.querySelector('.highest');
+    highest.addEventListener('click', () => {
+        const productContainer = document.querySelector('.product-container');
+        productContainer.innerHTML = '';
+        const highestPriceArr = filterStateArr.sort((a,b) => b.price - a.price);
+        const productArr = randomFnForProducts(highestPriceArr.length);
+        for(let i=0; i<productArr.length; i++){
+            const item = productArr[i];
+            createProductItem(productContainer, highestPriceArr, item);
         }
     })
 }
