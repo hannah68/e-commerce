@@ -807,7 +807,7 @@ const fetchFilterProducts = async () => {
     filterCategoryClick(data);
     filterPriceClick(data);
     searchProduct(data);
-
+    renderFilters(data)
     
 }
 
@@ -818,7 +818,7 @@ const filterCollectionClick = (data) => {
         li.addEventListener('click', () => {
             const text = li.textContent;
             shopping_basketState.filter.collection[text] = true;
-            renderFilters(data)
+            // renderFilters(data)
         })
     })
 }
@@ -833,7 +833,7 @@ const filterColorClick = (data) => {
                 if(input.checked){
                     const inputId = input.id;
                     shopping_basketState.filter.color[inputId] = true;
-                    renderFilters(data)
+                    // renderFilters(data)
                 }
             })
         })
@@ -850,7 +850,6 @@ const filterCategoryClick = (data) => {
                 if(input.checked){
                     const inputId = input.id;
                     shopping_basketState.filter.category[inputId] = true;
-                    renderFilters(data)
                 }
             })
         })
@@ -868,7 +867,6 @@ const filterPriceClick = (data) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
             shopping_basketState.filter.price.push(value);
-            renderFilters(data)
         },value);
     })
     function changePriceVal(value){
@@ -881,7 +879,6 @@ const filterPriceClick = (data) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
             shopping_basketState.filter.price.push(value);
-            renderFilters(data)
         },value);
     })
 
@@ -894,6 +891,7 @@ const filterPriceClick = (data) => {
 const renderFilters = (data) => {
     const form = document.querySelector('.filter__collection');
     const state = shopping_basketState.filter;
+    console.log(state);
     
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -907,6 +905,7 @@ const renderFilters = (data) => {
                 filterStateArr.push(el)
             }
         });
+        console.log(filterStateArr);
         const productContainer = document.querySelector('.product-container');
         productContainer.innerHTML = filterStateArr.map(el => 
             `
@@ -993,6 +992,7 @@ const searchProduct = (data) => {
 
 
 const renderSort = (filterStateArr,data) => {
+    console.log(filterStateArr);
     if(filterStateArr.length !== null){
         sortByLowestPrice(filterStateArr);
         sortByHighestPrice(filterStateArr);
@@ -1022,10 +1022,11 @@ const sortByHighestPrice = (filterStateArr) => {
         const productContainer = document.querySelector('.product-container');
         productContainer.innerHTML = '';
         const highestPriceArr = filterStateArr.sort((a,b) => b.price - a.price);
-        const productArr = randomFnForProducts(highestPriceArr.length);
-        for(let i=0; i<productArr.length; i++){
-            const item = productArr[i];
-            createProductItem(productContainer, highestPriceArr, item);
-        }
+        console.log(highestPriceArr);
+        // const productArr = randomFnForProducts(highestPriceArr.length);
+        // for(let i=0; i<productArr.length; i++){
+        //     const item = productArr[i];
+        //     createProductItem(productContainer, highestPriceArr, item);
+        // }
     })
 }
