@@ -527,49 +527,42 @@ const createProductInfoText = (productInfoContainer,eachItem) => {
 const listenToAddToBasket = () => {
     const addBtn = document.querySelector('.add-btn');
     const numInput = document.querySelector('.num');
-    
+    const basketNum = document.querySelector('.basket-num');
+    let val = Number(basketNum.innerText);
+
     addBtn.addEventListener('click', () => {
+        const cart = shopping_basketState.selectedItems
+        basketNum.classList.add('show');
+        basketNum.innerText = `${val += 1}`;
         const quantityValue = Number(numInput.value);
         const itemId = Number(addBtn.id);
-        showNumsOnBasket(quantityValue, itemId);
         numInput.value = '';
-    })
-}
 
-// show nums on basket===================================
-const showNumsOnBasket = (quantityValue, itemId) => {
-    const basketNum = document.querySelector('.basket-num');
-    basketNum.classList.add('show');
-    let val = Number(basketNum.innerText);
-    basketNum.innerText = `${val += quantityValue}`;
-    listenToClickBasket(quantityValue, itemId);
-}
-
-
-let basketArr =[];
-// listen to click shopping basket===============================
-const listenToClickBasket = (quantityValue, itemId) => {
-    const navbarIcon = document.querySelector('.navbar__icon');
-    navbarIcon.addEventListener('click', () => {
         fetch(`${productsURL}`)
             .then(res => res.json())
             .then(data => {
-                data.map(el => {
-                    if(el.id === itemId){
+                const updatedArr = data.filter(el => {
+                    if(el.id === itemId && cart.includes(el)){
+                        el.quantity += 1;
+                        return el;
+                    }
+                    else if(el.id === itemId && !cart.includes(el)){
                         el.quantity += quantityValue
                         el.total = Number((el.quantity * el.price).toFixed(2));
-                        shopping_basketState.selectedItems = [];
-                        basketArr.push(el);
+                        return el
                     }
-                });
-                
-                let unique = ([...new Set(basketArr.map(JSON.stringify))]).map(JSON.parse);
-                let newState = {selectedItems: unique}
-                updateState(newState);
-                createShoppingCart();
+                })
+
+                updateState({selectedItems: [...shopping_basketState.selectedItems, ...updatedArr]});
+                console.log(shopping_basketState);
+                const navbarIcon = document.querySelector('.navbar__icon');
+                navbarIcon.addEventListener('click', () => {
+                    createShoppingCart();
+                })
             })
     })
 }
+
 
 // empty popup ==============================================
 const emptyPopUp =() => {
@@ -601,7 +594,7 @@ const createShoppingCart = () => {
 }
 
 // listen to close basket=================================
-const listenToCloseBasket = ()=> {
+const listenToCloseBasket = () => {
     const closeShoppingCart = document.querySelector('.popup__close');
     const popUp = document.querySelector('.popup');
     closeShoppingCart.addEventListener('click', () => {
@@ -709,8 +702,9 @@ const createPopupContentThird = (popupContentContainer, totalQuantity, totalItem
 
 // listen to plus button=======================================
 const listenToPlusButton = (quantity, finalPrice) => {
+    const cartItems = shopping_basketState.selectedItems;
     const elementId = Number(quantity.parentElement.id);
-    const updatedArr = basketArr.map(el => {
+    const updatedArr = cartItems.map(el => {
         if(el.id === elementId){
             el.quantity += 1
             el.total = Number((el.quantity * el.price).toFixed(2));
@@ -719,12 +713,7 @@ const listenToPlusButton = (quantity, finalPrice) => {
         }
         return el;
     });
-
-    let unique = ([...new Set(updatedArr.map(JSON.stringify))]).map(JSON.parse);
-    let newState = {selectedItems: unique}
-    updateState(newState);
     
-    const cartItems = shopping_basketState.selectedItems;
     const updateTotalArr = cartItems.map(el => Number(el.total));
     const updatedTotal = updateTotalArr.reduce((acc,curr) => acc+curr);
         
@@ -742,41 +731,36 @@ const listenToPlusButton = (quantity, finalPrice) => {
 const listenToMinusButton = (quantity, finalPrice) => {
     const elementId = Number(quantity.parentElement.id);
     const basketNum = document.querySelector('.basket-num');
-    
-    basketArr.map(el => {
+    let cartItems = shopping_basketState.selectedItems;
+
+    const updatedArr = cartItems.map(el => {
         if(el.id === elementId){
             if(el.quantity > 1){
                 el.quantity -= 1
                 el.total = Number((el.quantity * el.price).toFixed(2));
                 quantity.value = el.quantity;
                 finalPrice.innerText = `£${el.total}`;
-                let newState = {selectedItems: basketArr}
-                updateState(newState);
-                
             }
             else if(el.quantity <= 1){
-                const idx = basketArr.indexOf(el);
-                basketArr.splice(idx,1);
+                const idx = cartItems.indexOf(el);
+                cartItems.splice(idx,1);
                 finalPrice.parentElement.remove();
-                let newState = {selectedItems: basketArr}
-                updateState(newState);
+                return
             }
         }
         return el;
     });
 
-    let cartItems = shopping_basketState.selectedItems;
     if(cartItems.length === 0){
         const container = document.querySelector('.popup__content-container');
         container.innerHTML = '';
-        basketArr = [];
         basketNum.innerText = 0;
         basketNum.classList.remove('show');
         const h2El = document.createElement('h2');
         h2El.innerText = 'Hi, Your shopping basket is empty!';
         container.append(h2El);
-        let newState = {selectedItems: basketArr}
-        updateState(newState);
+        listenToAddToBasket()
+        return container;
     }
     
     const updateTotalArr = cartItems.map(el => Number(el.total));
@@ -793,6 +777,8 @@ const listenToMinusButton = (quantity, finalPrice) => {
     const totalInput = document.querySelector('.total-input-item');
     totalInput.innerText = `£${updatedTotal}`;
     totalQuantity.innerText = updatedQuantity;
+
+    
 }
 
 // Filter section**************************************************
@@ -818,7 +804,7 @@ const filterCollectionClick = (data) => {
         li.addEventListener('click', () => {
             const text = li.textContent;
             shopping_basketState.filter.collection[text] = true;
-            // renderFilters(data)
+            renderFilters(data)
         })
     })
 }
@@ -891,23 +877,25 @@ const filterPriceClick = (data) => {
 const renderFilters = (data) => {
     const form = document.querySelector('.filter__collection');
     const state = shopping_basketState.filter;
-    console.log(state);
     
+    let filterStateArr = [];
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        let filterStateArr = [];
-        data.filter(el => {
+        console.log(state);
+        const me = data.filter(el => {
             const category = state.category[el.category];
             const collection = state.collection[el.collection];
             const color = state.color[el.color];
             const price = Number(state.price[0]);
-            if(category === true && collection === true && color === true && el.price <= price){
-                filterStateArr.push(el)
+            if(category === true || collection === true || color === true || el.price <= price){
+                return el
             }
         });
-        console.log(filterStateArr);
+        console.log(me);
+        
+        // console.log(filterStateArr);
         const productContainer = document.querySelector('.product-container');
-        productContainer.innerHTML = filterStateArr.map(el => 
+        productContainer.innerHTML = me.map(el => 
             `
             <div class="product">
                 <img class="product__img" src="${el.img}" alt="${el.title}">
@@ -926,12 +914,12 @@ const renderFilters = (data) => {
             </div>
             `
         ).join('');
-        filterStateArr.map(el => {
-            const detailBtn = document.querySelector('.product__btn');
-            listenToMoreDetailsBtn(detailBtn,el);
-        })
-        renderClearFilters(filterStateArr,data, productContainer);
-        renderSort(filterStateArr,data);
+        // filterStateArr.map(el => {
+        //     const detailBtn = document.querySelector('.product__btn');
+        //     listenToMoreDetailsBtn(detailBtn,el);
+        // })
+        // renderClearFilters(filterStateArr,data, productContainer);
+        // renderSort(filterStateArr,data);
     })
 }
 
