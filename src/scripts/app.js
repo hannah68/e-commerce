@@ -25,7 +25,8 @@ let shopping_basketState = {
             'Lavender': false
         },
         category: {'Chair': false, 'Table': false, 'Bed': false, 'Lamp': false, 'Sofa': false},
-        price: []
+        price: [],
+        
     }
 };
 
@@ -407,7 +408,7 @@ const listenToClickCollectionIcon = () => {
         collectionList.classList.toggle('show');
         collectionMenu.classList.toggle('removeBorder');
     });
-    fetchFilterProducts()
+    
 }
 
 // listen To Click Color Icon==============================
@@ -787,13 +788,14 @@ const listenToMinusButton = (quantity, finalPrice) => {
 const fetchFilterProducts = async () => {
     const res = await fetch(`${productsURL}`);
     const data = await res.json()
-    
+    const filterArr = shopping_basketState.filter.filteredArr
     filterCollectionClick(data);
     filterColorClick(data);
     filterCategoryClick(data);
     filterPriceClick(data);
     searchProduct(data);
-    renderFilters(data)
+    renderFilters(data);
+    renderSort(filterArr,data);
     
 }
 
@@ -804,7 +806,7 @@ const filterCollectionClick = (data) => {
         li.addEventListener('click', () => {
             const text = li.textContent;
             shopping_basketState.filter.collection[text] = true;
-            renderFilters(data)
+            // renderFilters(data)
         })
     })
 }
@@ -836,6 +838,7 @@ const filterCategoryClick = (data) => {
                 if(input.checked){
                     const inputId = input.id;
                     shopping_basketState.filter.category[inputId] = true;
+                    // renderFilters(data)
                 }
             })
         })
@@ -878,24 +881,24 @@ const renderFilters = (data) => {
     const form = document.querySelector('.filter__collection');
     const state = shopping_basketState.filter;
     
-    let filterStateArr = [];
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         console.log(state);
-        const me = data.filter(el => {
+        const filteredArr = data.filter(el => {
             const category = state.category[el.category];
             const collection = state.collection[el.collection];
             const color = state.color[el.color];
-            const price = Number(state.price[0]);
-            if(category === true || collection === true || color === true || el.price <= price){
+            const price = state.price[0];
+            console.log(price);
+            if(category && collection && color && el.price <= price){
                 return el
             }
         });
-        console.log(me);
+        console.log(filteredArr);
+        state.filteredArr = filteredArr;
         
-        // console.log(filterStateArr);
         const productContainer = document.querySelector('.product-container');
-        productContainer.innerHTML = me.map(el => 
+        productContainer.innerHTML = filteredArr.map(el => 
             `
             <div class="product">
                 <img class="product__img" src="${el.img}" alt="${el.title}">
@@ -914,21 +917,21 @@ const renderFilters = (data) => {
             </div>
             `
         ).join('');
-        // filterStateArr.map(el => {
-        //     const detailBtn = document.querySelector('.product__btn');
-        //     listenToMoreDetailsBtn(detailBtn,el);
-        // })
-        // renderClearFilters(filterStateArr,data, productContainer);
-        // renderSort(filterStateArr,data);
+        filteredArr.map(el => {
+            const detailBtn = document.querySelector('.product__btn');
+            listenToMoreDetailsBtn(detailBtn,el);
+        })
+        renderClearFilters(filteredArr,data, productContainer);
+        
     })
 }
 
 // render clear filters===============================================
-const renderClearFilters = (filterStateArr, data, productContainer) => {
+const renderClearFilters = (filteredArr, data, productContainer) => {
     const clearBtn = document.querySelector('.clear-btn');
     const state = shopping_basketState.filter;
     clearBtn.addEventListener('click', () => {
-        filterStateArr.forEach(el => {
+        filteredArr.forEach(el => {
             state.category[el.category] = false;
             state.collection[el.collection] = false;
             state.color[el.color] = false;
@@ -979,23 +982,24 @@ const searchProduct = (data) => {
 }
 
 
-const renderSort = (filterStateArr,data) => {
-    console.log(filterStateArr);
-    if(filterStateArr.length !== null){
-        sortByLowestPrice(filterStateArr);
-        sortByHighestPrice(filterStateArr);
+const renderSort = (filteredArr,data) => {
+    console.log(filteredArr);
+    if(filteredArr.length !== null){
+        sortByLowestPrice(filteredArr);
+        sortByHighestPrice(filteredArr);
     }else{
         sortByLowestPrice(data);
         sortByHighestPrice(data);
     }
 }
 
-const sortByLowestPrice = (filterStateArr) => {
+const sortByLowestPrice = (arr) => {
     const lowest = document.querySelector('.lowest');
     lowest.addEventListener('click', () => {
+        console.log('clicked');
         const productContainer = document.querySelector('.product-container');
         productContainer.innerHTML = '';
-        const lowestPriceArr = filterStateArr.sort((a,b) => a.price - b.price);
+        const lowestPriceArr = arr.sort((a,b) => a.price - b.price);
         const productArr = randomFnForProducts(lowestPriceArr.length);
         for(let i=0; i<productArr.length; i++){
             const item = productArr[i];
@@ -1004,12 +1008,13 @@ const sortByLowestPrice = (filterStateArr) => {
     })
 }
 
-const sortByHighestPrice = (filterStateArr) => {
+const sortByHighestPrice = (arr) => {
     const highest = document.querySelector('.highest');
     highest.addEventListener('click', () => {
+        console.log('clicked');
         const productContainer = document.querySelector('.product-container');
         productContainer.innerHTML = '';
-        const highestPriceArr = filterStateArr.sort((a,b) => b.price - a.price);
+        const highestPriceArr = arr.sort((a,b) => b.price - a.price);
         console.log(highestPriceArr);
         // const productArr = randomFnForProducts(highestPriceArr.length);
         // for(let i=0; i<productArr.length; i++){
